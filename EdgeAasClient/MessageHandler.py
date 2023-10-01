@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
-from mqtt_client import MqttClient
-from rest_client import RestClient
+from EdgeAasClient.MqttClient import MqttClient
+from EdgeAasClient.RestClient import RestClient
 
 # MessageHandler Interface
 class MessageHandler(ABC):

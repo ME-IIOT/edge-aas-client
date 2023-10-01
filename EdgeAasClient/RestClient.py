@@ -66,23 +66,23 @@ class IRestClient(ABC):
 
 class RestClient(IRestClient):
 
-    def __init__(self, base_url: str = ''):
-        self.base_url = base_url
+    def __init__(self, baseUrl: str = ''):
+        self.baseUrl = baseUrl
 
     def get(self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None) -> Union[Dict[str, Union[str, int]], str]:
-        response = requests.get(self.base_url + url, params=params, headers=headers)
+        response = requests.get(self.baseUrl + url, params=params, headers=headers)
         return self._parse_response(response)
 
     def post(self, url: str, data: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None) -> Union[Dict[str, Union[str, int]], str]:
-        response = requests.post(self.base_url + url, json=data, headers=headers)
+        response = requests.post(self.baseUrl + url, json=data, headers=headers)
         return self._parse_response(response)
 
     def put(self, url: str, data: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None) -> Union[Dict[str, Union[str, int]], str]:
-        response = requests.put(self.base_url + url, json=data, headers=headers)
+        response = requests.put(self.baseUrl + url, json=data, headers=headers)
         return self._parse_response(response)
 
     def delete(self, url: str, headers: Optional[Dict[str, str]] = None) -> Union[Dict[str, Union[str, int]], str]:
-        response = requests.delete(self.base_url + url, headers=headers)
+        response = requests.delete(self.baseUrl + url, headers=headers)
         return self._parse_response(response)
 
     def _parse_response(self, response: requests.Response) -> Union[Dict[str, Union[str, int]], str]:
