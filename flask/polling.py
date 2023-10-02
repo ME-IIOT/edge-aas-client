@@ -29,13 +29,13 @@ class Polling:
             time.sleep(60) # Sleep for 1 minute
 
     def update(self):
-        submodelIds = self.get_all_submodel_ids()
+        submodelIds = self.get_all_submodelIds()
         for submodelId in submodelIds:
             polledSubmodel = self.extClient.get(f'/submodels/{submodelId.decode()}')
             self.intClient.put(f'/submodels/{submodelId.decode()}', data=polledSubmodel)
             print("update submodel: ", base64.b64decode(submodelId).decode('utf-8'))
 
-    def get_all_submodel_ids(self):
+    def get_all_submodelIds(self):
         # Fetch all submodels from the MongoDB collection through internal client
         submodels = self.intClient.get('/submodels')
         submodels = submodels["submodels"]

@@ -91,4 +91,3 @@ class RestClient(IRestClient):
         except ValueError:
             return response.text
 
-# Assuming IRestClient and other dependencies have been defined as before
