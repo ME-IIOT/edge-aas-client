@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'api.interfaces',
     'api.nameplate',
     'api.template',
+    'api.aasx',
 ]
 
 MIDDLEWARE = [
