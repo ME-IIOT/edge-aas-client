@@ -1,8 +1,16 @@
 from .MessageHandler import MessageHandler
 from typing import List
 
-# Base Reactor class
-class Reactor:
+# Base Reactor class implementing Singleton pattern.
+# https://www.geeksforgeeks.org/singleton-pattern-in-python-a-complete-guide/
+# 
+class Reactor(object):
+    # Singleton instance
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Reactor, cls).__new__(cls)
+        return cls.instance
+
     def __init__(self):
         self.handlers = {}
 

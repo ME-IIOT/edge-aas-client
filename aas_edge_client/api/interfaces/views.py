@@ -47,6 +47,8 @@ class InterfaceViewSet(viewsets.ModelViewSet):
             responseData.pop('id', None)
             # submodelData = transform_response(responseData, settings.SUBMODEL_TEMPLATE_PATH + '/Submodel_Configuration.json')
             # reactor handle the submodel_data (send to aas repository)
+            # reactor.getHadler(event).handle(request)
+            # reactor.handleevent(request, 'rest', submodelData=submodelData)
             return Response(responseData, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
