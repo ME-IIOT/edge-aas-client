@@ -1,4 +1,4 @@
-from MessageHandler import MessageHandler
+from .MessageHandler import MessageHandler
 from typing import List
 
 # Base Reactor class
@@ -8,9 +8,9 @@ class Reactor:
 
     def register_handler(self, protocol, handler):
         """Register a message handler for a specific protocol."""
-        if not issubclass(handler, MessageHandler):
+        if not isinstance(handler, MessageHandler):
             raise ValueError("Handler must be a subclass of MessageHandler")
-        self.handlers[protocol] = handler()
+        self.handlers[protocol] = handler
 
     def handle_event(self, request, protocol='rest',*args, **kwargs):
         """Dispatch the event to the appropriate handler."""

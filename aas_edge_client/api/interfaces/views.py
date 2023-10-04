@@ -1,11 +1,16 @@
-# interfaces/views.py
-
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Interface
 from .serializers import InterfaceSerializer
+from submodels_template.parser_submodel import transform_response
+from django.conf import settings
 
-from aas_edge_client.apps import reactor # import the global variable reactor
+#from aas_edge_client.apps import reactor # import the global variable reactor
+from django.apps import apps
+
+# call reactor (for future use)
+app_config = apps.get_app_config('aas_edge_client')
+reactor = app_config.reactor
 
 class InterfaceViewSet(viewsets.ModelViewSet):
     """
@@ -21,23 +26,27 @@ class InterfaceViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        response_data = serializer.data
-        
-        # Removing 'interface_id' from the response data
-        response_data.pop('interface_id', None)
-        
-        return Response(response_data)
+        serializer = InterfaceSerializer(instance)
+        responseData = serializer.data
+        # Removing 'interface_id', 'id from the response data
+        responseData.pop('interface_id', None)
+        responseData.pop('id', None)
+        return Response(responseData)
 
-    # If you want to customize other methods (like `list`, `update`, etc.),
-    # you can override them here similarly to the `create` method.
-
-    # For example, if you want to add custom logic to the list method:
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.get_queryset()
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     # Add your custom logic here
-    #     return Response(serializer.data)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = InterfaceSerializer(instance, data=request.data, context={'request': request, 'view_kwargs': self.kwargs})
+        if serializer.is_valid():
+            serializer.save()
+            responseData = serializer.data
+            # Removing 'interface_id', 'id from the response data
+            responseData.pop('interface_id', None)
+            responseData.pop('id', None)
+            # submodelData = transform_response(responseData, settings.SUBMODEL_TEMPLATE_PATH + '/Submodel_Configuration.json')
+            # reactor handle the submodel_data (send to aas repository)
+            return Response(responseData, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

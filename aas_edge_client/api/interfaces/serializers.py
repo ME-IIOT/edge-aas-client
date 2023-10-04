@@ -25,7 +25,7 @@ class InterfaceSerializer(serializers.ModelSerializer):
                     self.fields['interface_id'].required = False
                     # ... set other field requirements as needed
 
-            # For GET requests
+            # For GET requests (Not work, pop directly in views.py)
             elif request.method == 'GET' and 'interface_id' in view_kwargs:
                 # For /interfaces/{interface_id} endpoint, exclude 'interface_id'
                 self.fields.pop('interface_id', None)
