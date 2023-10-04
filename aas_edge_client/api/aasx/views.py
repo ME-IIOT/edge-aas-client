@@ -4,10 +4,13 @@ from django.shortcuts import render
 # This endpoint will collect and show link to all the AASX files
 
 # {
-#     "NetworkSettings": [
+#     "NetworkSettings": {
 #         "InterfaceEth1":{
 #             "IPv4Address": "...",
 #             "IPv4SubnetMask": "...",
+#         },
+#         "InterfaceEth2":{
+#             "IPv4Address": "...",
 #         }
 #     }
 # }
