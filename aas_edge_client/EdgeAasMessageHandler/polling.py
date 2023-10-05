@@ -32,3 +32,6 @@ class Polling:
         translatedElement = aas_SM_element_2_django_response(polledSubmodelElement)
         output = self.intClient.put('/api/interfaces', data=translatedElement)
         print(f"status: {output} update submodel interfaces")
+
+    def stop(self):
+        self.stopEvent.set()
