@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'aas_edge_client',
     'api.interfaces',
     'api.nameplate',
-    'api.template',
+    # 'api.template',
     'api.aasx',
 ]
 
@@ -61,12 +61,15 @@ STATIC_URL = '/static/'
 
 import os
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,11 +79,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
-    },
-    {
-        # ...
-        'APP_DIRS': True,
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
     },
     
 ]

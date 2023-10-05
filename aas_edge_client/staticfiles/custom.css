@@ -1,0 +1,16 @@
+body {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.navbar {
+    background-color: #34495E;
+}
+
+.container {
+    background-color: #2C3E50;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #ECF0F1;
+}

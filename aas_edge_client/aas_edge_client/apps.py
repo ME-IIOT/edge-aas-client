@@ -8,6 +8,9 @@ class AasEdgeClientConfig(AppConfig):
     _reactor = None  # Store the reactor as a class-level attribute
 
     def ready(self):
+        from .startup import start_polling
+        start_polling()
+
         # Create and set the Reactor global variable
         self._reactor = Reactor()
 
