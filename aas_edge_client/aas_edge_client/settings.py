@@ -57,6 +57,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'aas_edge_client.urls'
 
+STATIC_URL = '/static/'
+
+import os
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -71,6 +77,12 @@ TEMPLATES = [
             ],
         },
     },
+    {
+        # ...
+        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+    },
+    
 ]
 
 WSGI_APPLICATION = 'aas_edge_client.wsgi.application'
