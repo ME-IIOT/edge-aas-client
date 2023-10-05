@@ -48,7 +48,7 @@ def django_response_2_aas_SM_element(djangoJSON, templateJSON):
         else:
             templateJSON[index]["value"] = value
 
-    return templateJSON
+    return templateJSON[0]
         
 
 def aas_SM_element_2_django_response(templateJSON):
@@ -64,20 +64,20 @@ def aas_SM_element_2_django_response(templateJSON):
 
     return djangoJSON
 
-inputResponseJSON = []
-with open("inputJSON.json", 'r') as file:
-    inputResponseJSON = json.load(file)
+# inputResponseJSON = []
+# with open("inputJSON.json", 'r') as file:
+#     inputResponseJSON = json.load(file)
 
 
-outputResponseJSON = []
-with open("NetworkSetting.json", 'r') as file:
-    outputResponseJSON = json.load(file)
+# outputResponseJSON = []
+# with open("NetworkSetting.json", 'r') as file:
+#     outputResponseJSON = json.load(file)
 
-# print(inputResponseJSON)
-# print(outputResponseJSON)
+# # print(inputResponseJSON)
+# # print(outputResponseJSON)
 
-# print(json.dumps(django_response_2_aas_SM_element(inputResponseJSON, outputResponseJSON)))
-print(json.dumps(aas_SM_element_2_django_response(outputResponseJSON)))
+# # print(json.dumps(django_response_2_aas_SM_element(inputResponseJSON, outputResponseJSON)))
+# print(json.dumps(aas_SM_element_2_django_response(outputResponseJSON)))
 
 
     
