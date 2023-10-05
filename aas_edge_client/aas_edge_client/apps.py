@@ -11,7 +11,7 @@ class AasEdgeClientConfig(AppConfig):
         self._reactor = Reactor()
 
         # Create an instance of RestMessageHandler with a base URL
-        restHandler = RestMessageHandler(baseUrl='http://repository.aas.dev.iot.murrelektronik.com')
+        restHandler = RestMessageHandler(baseUrl='http://localhost:51000')
         mqttHandler = MqttMessageHandler()
 
         # Register the handlers with the reactor
