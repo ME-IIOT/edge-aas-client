@@ -1,0 +1,308 @@
+[
+    {
+      "ordered": false,
+      "allowDuplicates": false,
+      "semanticId": {
+        "keys": []
+      },
+      "constraints": [],
+      "hasDataSpecification": [],
+      "idShort": "NetworkSetting",
+      "category": "CONSTANT",
+      "modelType": {
+        "name": "SubmodelElementCollection"
+      },
+      "value": [
+        {
+          "ordered": false,
+          "allowDuplicates": false,
+          "semanticId": {
+            "keys": []
+          },
+          "constraints": [],
+          "hasDataSpecification": [],
+          "idShort": "InterfaceEth1",
+          "category": null,
+          "modelType": {
+            "name": "SubmodelElementCollection"
+          },
+          "value": [
+            {
+              "value": "eth01234",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4Address",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "192.168.1.104",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4SubnetMask",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "255.255.255.0",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "Name",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "1000 MBs",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "LinkSpeedReceiveTransmit",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": null,
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4DNSServers",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "PrimaryDNSSuffix",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            }
+          ],
+          "kind": "Instance",
+          "descriptions": null
+        },
+        {
+          "ordered": false,
+          "allowDuplicates": false,
+          "semanticId": {
+            "keys": []
+          },
+          "constraints": [],
+          "hasDataSpecification": [],
+          "idShort": "InterfaceEth0",
+          "category": null,
+          "modelType": {
+            "name": "SubmodelElementCollection"
+          },
+          "value": [
+            {
+              "value": "eth1",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4Address",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "112.113.114.116",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4SubnetMask",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "8.8.8.8",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "Name",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "LinkSpeedReceiveTransmit",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": null,
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "IPv4DNSServers",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            },
+            {
+              "value": "",
+              "valueId": null,
+              "semanticId": {
+                "keys": []
+              },
+              "constraints": [],
+              "hasDataSpecification": [],
+              "idShort": "PrimaryDNSSuffix",
+              "category": null,
+              "modelType": {
+                "name": "Property"
+              },
+              "valueType": {
+                "dataObjectType": {
+                  "name": ""
+                }
+              },
+              "kind": "Instance",
+              "descriptions": null
+            }
+          ],
+          "kind": "Instance",
+          "descriptions": null
+        }
+      ],
+      "kind": "Instance",
+      "descriptions": null
+    }
+  ]

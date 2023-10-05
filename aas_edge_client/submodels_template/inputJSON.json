@@ -1,0 +1,20 @@
+{
+    "NetworkSetting": {
+        "InterfaceEth0": {
+            "Name": "eth0",
+            "IPv4Address": "192.168.1.104",
+            "IPv4SubnetMask": "255.255.255.0",
+            "LinkSpeedReceiveTransmit": "",
+            "IPv4DNSServers": null,
+            "PrimaryDNSSuffix": ""
+        },
+        "InterfaceEth1": {
+            "Name": "eth1",
+            "IPv4Address": "112.113.114.116",
+            "IPv4SubnetMask": "8.8.8.8",
+            "LinkSpeedReceiveTransmit": "",
+            "IPv4DNSServers": null,
+            "PrimaryDNSSuffix": ""
+        }
+    }
+}
