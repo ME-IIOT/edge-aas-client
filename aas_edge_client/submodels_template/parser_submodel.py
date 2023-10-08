@@ -1,4 +1,6 @@
 import json
+from collections import OrderedDict
+
 
 def transform_response(inputResponse, templateFilePath):
     """
@@ -41,14 +43,18 @@ def transform_response(inputResponse, templateFilePath):
 def django_response_2_aas_SM_element(djangoJSON, templateJSON):
     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
     
-#    for key, value in inputResponseJSON.items():
-    for index, (key, value) in enumerate(djangoJSON.items()):
-        if isinstance(value, dict):
-            django_response_2_aas_SM_element(value, templateJSON[index]["value"])
+# #    for key, value in inputResponseJSON.items():
+#     for index, (key, value) in enumerate(djangoJSON.items()):
+#         if isinstance(value, dict):
+#             django_response_2_aas_SM_element(value, templateJSON[index]["value"])
+#         else:
+#             templateJSON[index]["value"] = value
+    for element in templateJSON:
+        if isinstance(element["value"], list):
+            django_response_2_aas_SM_element(djangoJSON[element["idShort"]], element["value"])
         else:
-            templateJSON[index]["value"] = value
-
-    return templateJSON[0]
+            element["value"] = djangoJSON[element["idShort"]]
+    # return templateJSON[0]
         
 
 def aas_SM_element_2_django_response(templateJSON):
@@ -63,6 +69,27 @@ def aas_SM_element_2_django_response(templateJSON):
             djangoJSON[element["idShort"]] = element["value"]
 
     return djangoJSON
+
+def ordered_to_regular_dict(ordered_dict):
+    return {k: ordered_to_regular_dict(v) if isinstance(v, OrderedDict) else v for k, v in ordered_dict.items()}
+
+
+# def django_response_2_aas_SM_element(djangoJSON, templateJSON):
+#     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
+#     # Iterate through keys and values in the input JSON
+#     for key, value in djangoJSON.items():
+#         # Find the corresponding entry in templateJSON's 'value' list by 'idShort' key
+#         corresponding_template = next((item for item in templateJSON['value'] if item['idShort'] == key), None)
+        
+#         # If a corresponding entry is found and the value is a dictionary, recurse with the nested values
+#         if corresponding_template and isinstance(value, dict):
+#             django_response_2_aas_SM_element(value, corresponding_template)
+        
+#         # If a corresponding entry is found and the value is not a dictionary, assign the value directly
+#         elif corresponding_template:
+#             corresponding_template["value"] = value
+    
+#     return templateJSON
 
 # inputResponseJSON = []
 # with open("inputJSON.json", 'r') as file:

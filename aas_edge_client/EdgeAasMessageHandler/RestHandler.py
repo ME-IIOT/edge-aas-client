@@ -35,6 +35,9 @@ class RestHandler(IRestHandler):
 
     def delete(self, url, headers=None):
         return self._make_request(requests.delete, url, headers=headers)
+    
+    def patch(self, url, data=None, headers=None):
+        return self._make_request(requests.patch, url, json=data, headers=headers)
 
     def _make_request(self, method, url, **kwargs):
         response = method(self.baseUrl + url, **kwargs)

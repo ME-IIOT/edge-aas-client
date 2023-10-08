@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from rest_framework.request import Request
 from enum import Enum
 from .RestHandler import RestHandler
-from submodels_template.parser_submodel import django_response_2_aas_SM_element
+from submodels_template.parser_submodel import django_response_2_aas_SM_element, ordered_to_regular_dict
 import json
 from django.conf import settings
 
@@ -39,10 +39,15 @@ class EdgeEventHandler(EventHandler):
         # outputResponseJSON = []
         restHandler = RestHandler(baseUrl='http://localhost:51000')
         try:
+            # add to list for recursive algorithm
             format = [restHandler.get(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
             restHandler.delete(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/NetworkSetting')
-            output = django_response_2_aas_SM_element(request_data, format)
-            restHandler.put(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/', data=output)
+            request_data = ordered_to_regular_dict(request_data)
+            # print(request_data)
+            django_response_2_aas_SM_element(request_data, format)
+            # print(format)
+            # take 1st element because of recursive algorithm
+            restHandler.put(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/', data=format[0])
             return True
         except:
             print("Error in EdgeEventHandler.handle_put()")

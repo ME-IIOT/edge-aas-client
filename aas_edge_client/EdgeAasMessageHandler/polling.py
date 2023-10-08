@@ -3,6 +3,7 @@ import time
 import base64
 from .RestHandler import RestHandler
 from submodels_template.parser_submodel import aas_SM_element_2_django_response
+import json
 class Polling:
 
     def __init__(self, extUrl: str, intUrl: str, stopEvent, interval: int):
@@ -29,9 +30,10 @@ class Polling:
 
     def update(self):
         polledSubmodelElement = [self.extClient.get(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/NetworkSetting/deep')["elem"]]
-        translatedElement = aas_SM_element_2_django_response(polledSubmodelElement)
-        output = self.intClient.put('/api/interfaces', data=translatedElement)
-        print(f"status: {output} update submodel interfaces")
+        translatedElement = json.dumps(aas_SM_element_2_django_response(polledSubmodelElement))
+        # should not call API directly -> lead to recursive call
+
+        self.intClient.patch('/api/interfaces/', data= json.loads(translatedElement), headers={'Content-Type': 'application/json'})
 
     def stop(self):
         self.stopEvent.set()

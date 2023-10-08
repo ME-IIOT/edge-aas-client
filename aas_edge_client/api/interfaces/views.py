@@ -41,9 +41,25 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
 
+
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             self.reactor.handle_event(EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, *args, **kwargs):
+        instance = self.queryset.first()
+        if not instance:
+            return Response({"detail": "No NetworkSetting object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -55,8 +71,10 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
         if not instance:
             return Response({"detail": "No NetworkSetting object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
         
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+ 
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             self.reactor.handle_event(EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
