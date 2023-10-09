@@ -59,17 +59,29 @@ def get_template(submodel: str, elements_list: list, serverURL = SERVER_URL, aas
     response = requests.get(element_URL).json()["elem"]
     return response
 
-def delete_element(submodel: str, elements_list: list, serverURL = SERVER_URL, aasIDShort = AAS_IDSHORT ):
-    elements_list = "/".join(elements_list)
-    element_URL = f"{serverURL}/aas/{aasIDShort}/submodels/{submodel}/elements/{elements_list}"
-    response = requests.delete(element_URL).json()
-    return response
+def delete_element(submodel, elements_list):
+    elements_path = "/".join(elements_list)
+    element_URL = f"{SERVER_URL}/aas/{AAS_IDSHORT}/submodels/{submodel}/elements/{elements_path}"
+    
+    try:
+        response = requests.delete(element_URL)
+        response.raise_for_status()  # Raise an exception for HTTP errors (e.g., 404)
+        return response.json()  # Assuming the server responds with JSON data
+    except requests.exceptions.RequestException as e:
+        print(f"Error deleting element: {e}")
+        return None
 
-def add_element(submodel: str, elements_list: list, request_data,  serverURL = SERVER_URL, aasIDShort = AAS_IDSHORT, ):
-    elements_list = "/".join(elements_list)
-    element_URL = f"{serverURL}/aas/{aasIDShort}/submodels/{submodel}/elements/{elements_list}"
-    response = requests.put(element_URL, data= request_data).json()
-    return response
+def add_element(submodel, elements_list, request_data):
+    elements_path = "/".join(elements_list)
+    element_URL = f"{SERVER_URL}/aas/{AAS_IDSHORT}/submodels/{submodel}/elements/{elements_path}"
+    
+    try:
+        response = requests.put(element_URL, json=request_data)
+        response.raise_for_status()  # Raise an exception for HTTP errors (e.g., 404)
+        return response.json()  # Assuming the server responds with JSON data
+    except requests.exceptions.RequestException as e:
+        print(f"Error adding element: {e}")
+        return None
 
 def update_element(submodel: str, elements_list: list, request_data, serverURL = SERVER_URL, aasIDShort = AAS_IDSHORT,  ):
     delete_elements_path = "/".join(elements_list)
@@ -224,15 +236,17 @@ def get_submodel_elements(submodel, elements_path):
         # 1. Get template
         template = [get_template(submodel = submodel, elements_list = path_list)] # pack it in a list for recursive
         print(template)
+        print(data)
         # 2. translate data to template
         data = name_value_2_django_response(data)
-        # print(data)
-        data = django_response_2_aas_SM_element(data, template)
-        # 3. send request to server
-        response = update_element(submodel = submodel, elements_list = path_list, request_data = data)
+        django_response_2_aas_SM_element(data, template)
+        templateData = template[0] # remove the [] because of recursiv
+        # # 3. send request to server
+        response = delete_element(submodel = submodel, elements_list = path_list)
+        path_list.pop(-1)
+        response = add_element(submodel = submodel, elements_list = path_list, request_data = templateData)
         return jsonify(message=update_result.get('message', None), error=update_result.get('error', None), server_response = response), update_result.get('status_code', 500)
-        # return jsonify(message=update_result.get('message', None), error=update_result.get('error', None)), update_result.get('status_code', 500)
-
+        
     elif request.method == 'DELETE':
         # Implement logic for DELETE method here
         pass
