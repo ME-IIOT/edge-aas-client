@@ -86,7 +86,6 @@ def add_element(submodel, elements_list, request_data):
 def update_element(submodel: str, elements_list: list, request_data, serverURL = SERVER_URL, aasIDShort = AAS_IDSHORT,  ):
     delete_elements_path = "/".join(elements_list)
     delete_element_URL = f"{serverURL}/aas/{aasIDShort}/submodels/{submodel}/elements/{delete_elements_path}"
-    print(delete_element_URL + "#################")
     add_elements_path = "/".join(elements_list.pop(-1))
     add_element_URL = f"{serverURL}/aas/{aasIDShort}/submodels/{submodel}/elements/{add_elements_path}"
     # delete_element(submodel=submodel, elements_list=elements_list)
@@ -226,27 +225,44 @@ def get_submodel_elements(submodel, elements_path):
         # Implement logic for POST method here
         pass
     elif request.method == 'PUT':
-        data = request.json
-        if not data:
-            return jsonify(message="No input data provided"), 400
-        # update Database
-        update_result = update_database(submodel, path_list, data)
-        # return jsonify(message=update_result.get('message', None), error=update_result.get('error', None)), update_result.get('status_code', 500)
-        # update server
-        # 1. Get template
-        template = [get_template(submodel = submodel, elements_list = path_list)] # pack it in a list for recursive
-        print(template)
-        print(data)
-        # 2. translate data to template
-        data = name_value_2_django_response(data)
-        django_response_2_aas_SM_element(data, template)
-        templateData = template[0] # remove the [] because of recursiv
-        # # 3. send request to server
-        response = delete_element(submodel = submodel, elements_list = path_list)
-        path_list.pop(-1)
-        response = add_element(submodel = submodel, elements_list = path_list, request_data = templateData)
-        return jsonify(message=update_result.get('message', None), error=update_result.get('error', None), server_response = response), update_result.get('status_code', 500)
-        
+        try:
+            data = request.json
+            if not data:
+                return jsonify(message="No input data provided"), 400
+
+            # Update Database
+            update_result = update_database(submodel, path_list, data)
+
+            if 'error' in update_result:
+                return jsonify(
+                    message=update_result.get('message', None),
+                    error=update_result.get('error', None),
+                    server_response=None
+                ), update_result.get('status_code', 500)
+
+            # Update Server
+            # 1. Get template
+            template = [get_template(submodel=submodel, elements_list=path_list)]
+
+            # 2. Translate data to template
+            data = name_value_2_django_response(data)
+            django_response_2_aas_SM_element(data, template)
+            templateData = template[0]
+
+            # 3. Send request to server
+            response = delete_element(submodel=submodel, elements_list=path_list)
+            path_list.pop(-1)
+            response = add_element(submodel=submodel, elements_list=path_list, request_data=templateData)
+
+            return jsonify(
+                message=update_result.get('message', None),
+                error=update_result.get('error', None),
+                server_response=response
+            ), update_result.get('status_code', 500)
+
+        except Exception as e:
+            # Handle other exceptions
+            return jsonify(message="An error occurred", error=str(e)), 500
     elif request.method == 'DELETE':
         # Implement logic for DELETE method here
         pass
@@ -262,121 +278,3 @@ if __name__ == '__main__':
     #     polling_thread.join()  # Wait for the thread to finish
     collect_data_from_server()
     app.run(debug=True)
-
-
-
-
-# @app.route('/shells', methods=['GET', 'POST'])
-# def manage_shells():
-#     if request.method == 'POST':
-#         # Fetch data from the POST request payload
-#         data = request.json
-#         if not data or not all(key in data for key in ["id", "assetInformation"]): #TODO: add modelType for v3
-#             return jsonify(message="Missing information"), 400
-
-#         # Adding the data to the "shell" collection in MongoDB
-#         mongo.db.shells.insert_one(data) #table name "shells"
-#         # send request to the server?
-#         # TODO
-
-#         return jsonify(message="shell added successfully!")
-    
-#     elif request.method == 'GET':
-#         # Fetching all shells from our MongoDB
-#         shells = list(mongo.db.shells.find({}))
-        
-#         # Remove the _id key from each shell
-#         for shell in shells:
-#             shell.pop("_id", None)
-            
-#         return jsonify(shells=shells)
-
-
-
-# @app.route('/shells/<aasIdentifier>', methods=['GET']) #TODO: add method PUT
-# def manage_shell(aasIdentifier):
-#     # Decode the aasIdentifier using Base64
-#     decodedAasIdentifier = base64.b64decode(aasIdentifier).decode('utf-8')
-
-#     # if request.method == 'PUT':
-#     #     data = request.json
-#     #     if not data:
-#     #         return jsonify(message="No input data provided"), 400
-
-#     #     # Replace the entire object with the new data, based on the 'id' field
-#     #     result = mongo.db.shells.replace_one({"id": decodedAasIdentifier}, data)
-        
-#     #     if result.modified_count == 0:
-#     #         return jsonify(message="Shell not found or not modified"), 404
-#     #     # Update server (Your TODO might go here)
-#     #     # TODO
-#     #     return jsonify(message="Shell updated successfully!")
-
-#     if request.method == 'GET':
-#         # Fetching the shell data from our MongoDB based on the decodedAasIdentifier
-#         shell = mongo.db.shells.find_one({"id": decodedAasIdentifier})
-#         if not shell:
-#             return jsonify(message="Shell not found"), 404
-        
-#         # Remove the _id key
-#         shell.pop("_id", None)
-
-#         # Return the shell data directly without nesting it under the 'shell' key
-#         return jsonify(shell)
-
-
-
-# @app.route('/submodels', methods=['GET', 'POST'])
-# def manage_submodels():
-#     if request.method == 'POST':
-#         # Fetch data from the POST request payload
-#         data = request.json
-#         if not data or not all(key in data for key in ["id", "modelType"]): # TODO: check openAPI for required fields
-#             return jsonify(message="Missing submodel information"), 400
-        
-#         # Adding the submodel data to the "submodel" collection in MongoDB
-#         mongo.db.submodels.insert_one(data)
-#         # POST to server
-#         # TODO
-
-#         return jsonify(message="Submodels added successfully!")
-    
-#     elif request.method == 'GET':
-#         # Fetching all submodels from our MongoDB (can be optimized for larger datasets)
-#         submodels = list(mongo.db.submodels.find({}))
-        
-#         # Convert the ObjectId to string for serialization
-#         for submodel in submodels:
-#             submodel.pop("_id", None)
-            
-#         return jsonify(submodels=submodels)
-
-
-# @app.route('/submodels/<submodelId>', methods=['GET', 'PUT'])
-# def manage_submodel(submodelId):
-    
-#     # Decode the submodelId using Base64
-#     decodedSubmodelId = base64.b64decode(submodelId).decode('utf-8')
-
-#     if request.method == 'GET':
-#         submodel = mongo.db.submodels.find_one({"id": decodedSubmodelId})
-#         if not submodel:
-#             return jsonify(message="Submodel not found"), 404
-
-#         # Remove the _id key
-#         submodel.pop("_id", None)
-
-#         # Return the submodel data directly
-#         return jsonify(submodel)
-
-    
-#     elif request.method == 'PUT':
-#         data = request.json
-#         if not data:
-#             print(1)
-#             return jsonify(message="No input data provided"), 400
-
-#         result = mongo.db.submodels.update_one({"id": decodedSubmodelId}, {"$set": data})
-#         if result.modified_count == 0:
-#             return jsonify(message="Submodel not found or not modified"), 404
-#         return jsonify(message="Submodel updated successfully!")

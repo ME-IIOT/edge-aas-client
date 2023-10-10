@@ -32,9 +32,11 @@ class AasEdgeClientConfig(AppConfig):
 
     def delayed_polling_start(self):
         # Delay to ensure server starts fully before polling begins
-        time.sleep(5)  # Adjust delay as needed
-        from .startup import start_polling
-        start_polling()
+        if self._polling_started is False:
+            self._polling_started = True
+            time.sleep(5)  # Adjust delay as needed
+            from .startup import start_polling
+            start_polling()
 
     @property
     def reactor(self):

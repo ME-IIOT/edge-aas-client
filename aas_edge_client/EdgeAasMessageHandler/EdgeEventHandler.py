@@ -7,7 +7,7 @@ from submodels_template.parser_submodel import django_response_2_aas_SM_element,
 import json
 from django.conf import settings
 
-print(settings.BASE_DIR)
+# print(settings.BASE_DIR)
 
 
 # Event String definition
@@ -30,12 +30,12 @@ class EdgeEventHandler(EventHandler):
                 print("EdgeEventHandler.handle_event() called with PUT request")
                 # restHandler.delete(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/NetworkSetting')
                 # restHandler.put(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/', data=request.data)
-                return self.handle_put(request, request_data=serializer_data)
+                return self.handle_put_interfaces(request, request_data=serializer_data)
 
         else:
             print("'request' or 'serializer.data' is missing.")
 
-    def handle_put(self, request, request_data ):
+    def handle_put_interfaces(self, request, request_data ):
         # outputResponseJSON = []
         restHandler = RestHandler(baseUrl='http://localhost:51000')
         try:
