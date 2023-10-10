@@ -1,9 +1,9 @@
 #This polling file is used to poll the data from the edge device and send it to the cloud, and other way (standalone file)
 import time
-import base64
 from .RestHandler import RestHandler
 from submodels_template.parser_submodel import aas_SM_element_2_django_response
 import json
+from django.conf import settings
 class Polling:
 
     def __init__(self, extUrl: str, intUrl: str, stopEvent, interval: int):
@@ -29,11 +29,17 @@ class Polling:
             time.sleep(self.interval)
 
     def update(self):
-        polledSubmodelElement = [self.extClient.get(url='/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/elements/NetworkSetting/deep')["elem"]]
-        translatedElement = json.dumps(aas_SM_element_2_django_response(polledSubmodelElement))
+        polledNetworkSetting = [self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting/deep')["elem"]]
+        translatedNetworkSetting = json.dumps(aas_SM_element_2_django_response(polledNetworkSetting))
         # should not call API directly -> lead to recursive call
 
-        self.intClient.patch('/api/interfaces/', data= json.loads(translatedElement), headers={'Content-Type': 'application/json'})
+        self.intClient.patch('/api/interfaces/', data= json.loads(translatedNetworkSetting), headers={'Content-Type': 'application/json'})
+
+        polledSensors = [self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors/deep')["elem"]]
+        translatedSensors = json.dumps(aas_SM_element_2_django_response(polledSensors))
+        # should not call API directly -> lead to recursive call
+
+        self.intClient.patch('/api/sensors/', data= json.loads(translatedSensors), headers={'Content-Type': 'application/json'})
 
     def stop(self):
         self.stopEvent.set()

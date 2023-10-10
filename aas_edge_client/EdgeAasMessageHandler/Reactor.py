@@ -4,17 +4,26 @@ from typing import List
 # Base Reactor class implementing Singleton pattern.
 # https://www.geeksforgeeks.org/singleton-pattern-in-python-a-complete-guide/
 # 
-class Reactor(object):
-    # Singleton instance
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(Reactor, cls).__new__(cls)
-        return cls.instance
+
+class Singleton(type):
+    _instances = {}
+    
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+class Reactor(metaclass = Singleton):
+    # # Singleton instance
+    # def __new__(cls):
+    #     if not hasattr(cls, 'instance'):
+    #         cls.instance = super(Reactor, cls).__new__(cls)
+    #     return cls.instance
 
     def __init__(self):
         self.handlers = {}
 
     def register_handler(self, event_name, handler):
+        print("Reactor.register_handler() called \n event_name: {} \n handler: {}".format(event_name, handler))
         """Register a message handler for a specific event."""
         # should we have a check if is this child class of EventHandler?
         handlers = self.handlers.get(event_name, []) # If no handlder for this event, return empty list
@@ -28,10 +37,12 @@ class Reactor(object):
         if handler in handlers: # if empty -> do nothing, if handler not in handlers -> do nothing
             handlers.remove(handler) # if list is empty -> lead to error if remove -> need check
         
-    def handle_event(self, event_name, *args, **kwargs):
+    def handle_event(self, *args, **kwargs):
         """Dispatch the event to the appropriate handler."""
+        event_name = kwargs.get('event_name', None)
         print("Reactor.handle_event() called \n event_name: {} \n args: {} \n kwargs: {}".format(event_name, args, kwargs))
         handlers = self.handlers.get(event_name, [])
+        # print(self.handlers)
         if handlers.__len__() == 0:
             print("No handlers registered for event: {}".format(event_name))
         for handler in handlers:

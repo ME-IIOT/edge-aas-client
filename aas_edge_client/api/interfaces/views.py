@@ -16,13 +16,13 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
 
     reactor = Reactor()
 
-    reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, EdgeEventHandler())
+    # reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, EdgeEventHandler())
 
     def create(self, request, *args, **kwargs):
         if NetworkSetting.objects.exists():
             return Response({"detail": "NetworkSetting already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
 
-        self.reactor.handle_event(EdgeEvent.INTERFACE_REQUEST, request)
+        self.reactor.handle_event( request,event_name = EdgeEvent.INTERFACE_REQUEST)
         return super().create(request, *args, **kwargs)
 
 
@@ -40,12 +40,13 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
             return Response({"detail": "No NetworkSetting object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-
+        
+        # print(self.reactor.handlers)
 
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
+            self.reactor.handle_event(event_name=EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -77,7 +78,7 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
+            self.reactor.handle_event(event_name=EdgeEvent.INTERFACE_REQUEST, request=request, serializer_data=serializer.data) 
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

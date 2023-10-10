@@ -28,7 +28,9 @@ class Interface(models.Model):
 
 
 class NetworkSetting(models.Model):
-    NetworkSetting = models.OneToOneField(Interface, 
+    NetworkSetting = models.OneToOneField(
+        Interface, 
         on_delete=models.CASCADE, 
         null=True, 
-        blank=True)
+        blank=True
+    )

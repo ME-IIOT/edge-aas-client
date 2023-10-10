@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'aas_edge_client',
     'api.interfaces',
-    'api.nameplate',
+    'api.sensor',
+    # 'api.nameplate',
     # 'api.template',
-    'api.aasx',
+    # 'api.aasx',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SUBMODEL_TEMPLATE_PATH = 'submodels_template'
+
+AAS_ID_SHORT = 'Murrelektronik_V000_CTXQ0_0100001_AAS'
+
+SERVER_URL = 'http://localhost:51000'
+
+CLIENT_URL = 'http://localhost:8000'

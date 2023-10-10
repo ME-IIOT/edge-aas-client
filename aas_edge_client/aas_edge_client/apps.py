@@ -19,16 +19,18 @@ class AasEdgeClientConfig(AppConfig):
         self._reactor = Reactor()
 
         # Create an instance of RestMessageHandler with a base URL
-        restHandler = RestMessageHandler(baseUrl='http://localhost:51000')
-        mqttHandler = MqttMessageHandler()
-        edgeEventHandler = EdgeEventHandler()
+        # restHandler = RestMessageHandler(baseUrl='http://localhost:51000')
+        # mqttHandler = MqttMessageHandler()
+        interfaceEdgeEventHandler = EdgeEventHandler()
+        sensorEdgeEventHandler = EdgeEventHandler()
 
         # Register the handlers with the reactor
-        self._reactor.register_handler('rest', restHandler)
-        self._reactor.register_handler('mqtt', mqttHandler)
+        # self._reactor.register_handler('rest', restHandler)
+        # self._reactor.register_handler('mqtt', mqttHandler)
 
         # Create and register EdgeEventHandlers with the reactor
-        self._reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, edgeEventHandler)
+        self._reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, interfaceEdgeEventHandler)
+        self._reactor.register_handler(EdgeEvent.SENSOR_REQUEST, sensorEdgeEventHandler)
 
     def delayed_polling_start(self):
         # Delay to ensure server starts fully before polling begins
