@@ -26,7 +26,7 @@ class EdgeEventHandler(EventHandler):
         event_name = kwargs.get('event_name', None)
 
         if all([request, serializer_data, event_name]):
-            print("All 'request', 'serializer.data', and 'event_name' are available.")
+            # print("All 'request', 'serializer.data', and 'event_name' are available.")
             
             methods_map = {
                 ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_interfaces,
@@ -53,16 +53,12 @@ class EdgeEventHandler(EventHandler):
             format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
             restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting')
             request_data = ordered_to_regular_dict(request_data)
-            # print(request_data)
             django_response_2_aas_SM_element(request_data, format)
-            # print(format)
             # take 1st element because of recursive algorithm
             restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/', data=format[0])
             return True
         except:
             print("Error in EdgeEventHandler.handle_put()")
-        # return None
-        # print(format["elem"])
     
     def handle_put_sensors(self, request, request_data ):
         restHandler = RestHandler(baseUrl=settings.SERVER_URL)
@@ -71,9 +67,7 @@ class EdgeEventHandler(EventHandler):
             format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors/deep')["elem"]] #TODO: need some thing more dynamic
             restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors')
             request_data = ordered_to_regular_dict(request_data)
-            # print(request_data)
             django_response_2_aas_SM_element(request_data, format)
-            # print(format)
             # take 1st element because of recursive algorithm
             restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/', data=format[0])
             return True

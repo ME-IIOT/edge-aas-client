@@ -42,7 +42,6 @@ class Reactor(metaclass = Singleton):
         event_name = kwargs.get('event_name', None)
         print("Reactor.handle_event() called \n event_name: {} \n args: {} \n kwargs: {}".format(event_name, args, kwargs))
         handlers = self.handlers.get(event_name, [])
-        # print(self.handlers)
         if handlers.__len__() == 0:
             print("No handlers registered for event: {}".format(event_name))
         for handler in handlers:

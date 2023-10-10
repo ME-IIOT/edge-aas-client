@@ -139,10 +139,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SUBMODEL_TEMPLATE_PATH = 'submodels_template'
+# AAS_ID_SHORT = 'Murrelektronik_V000_CTXQ0_0100001_AAS'
 
-AAS_ID_SHORT = 'Murrelektronik_V000_CTXQ0_0100001_AAS'
+# SERVER_URL = 'http://localhost:51000'
 
-SERVER_URL = 'http://localhost:51000'
+# CLIENT_URL = 'http://localhost:8000'
 
-CLIENT_URL = 'http://localhost:8000'
+import os
+
+AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001_AAS')
+SERVER_URL = os.environ.get('SERVER_URL', 'http://localhost:51000')
+CLIENT_URL = os.environ.get('CLIENT_URL', 'http://localhost:18000')
