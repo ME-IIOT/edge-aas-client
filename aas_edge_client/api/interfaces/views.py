@@ -8,7 +8,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 from EdgeAasMessageHandler.Reactor import Reactor
 from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
-from django.apps import apps
+# from django.apps import apps
 
 class NetworkSettingViewSet(viewsets.ModelViewSet):
     queryset = NetworkSetting.objects.all()
@@ -16,7 +16,7 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
 
     reactor = Reactor()
 
-    # reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, EdgeEventHandler())
+    reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, EdgeEventHandler())
 
 
     def create(self, request, *args, **kwargs):

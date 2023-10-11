@@ -26,4 +26,5 @@ COPY . /code/
 EXPOSE 18000
 
 # Command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:18000", "aas_edge_client.wsgi:application"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:18000", "aas_edge_client.wsgi:application"]
+CMD ["python3", "manage.py", "runserver", "--noreload", "0.0.0.0:18000"]

@@ -15,7 +15,7 @@ class SensorsViewSet(viewsets.ModelViewSet):
     
     reactor = Reactor()
 
-    # reactor.register_handler(EdgeEvent.SENSOR_REQUEST, EdgeEventHandler())
+    reactor.register_handler(EdgeEvent.SENSOR_REQUEST, EdgeEventHandler())
 
 
     def create(self, request, *args, **kwargs):

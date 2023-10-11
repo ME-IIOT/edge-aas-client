@@ -7,8 +7,7 @@ from EdgeAasMessageHandler.Reactor import Reactor
 
 class AasEdgeClientConfig(AppConfig):
     name = 'aas_edge_client'
-    _reactor = None  # Store the reactor as a class-level attribute
-    _polling_started = False  # Add this flag
+    _reactor = None 
 
     def ready(self):
         # Start the delayed start_polling in a separate thread to avoid blocking
@@ -18,27 +17,11 @@ class AasEdgeClientConfig(AppConfig):
         # Create and set the Reactor global variable
         self._reactor = Reactor()
 
-        # Create an instance of RestMessageHandler with a base URL
-        # restHandler = RestMessageHandler(baseUrl='http://localhost:51000')
-        # mqttHandler = MqttMessageHandler()
-        interfaceEdgeEventHandler = EdgeEventHandler()
-        sensorEdgeEventHandler = EdgeEventHandler()
-
-        # Register the handlers with the reactor
-        # self._reactor.register_handler('rest', restHandler)
-        # self._reactor.register_handler('mqtt', mqttHandler)
-
-        # Create and register EdgeEventHandlers with the reactor
-        self._reactor.register_handler(EdgeEvent.INTERFACE_REQUEST, interfaceEdgeEventHandler)
-        self._reactor.register_handler(EdgeEvent.SENSOR_REQUEST, sensorEdgeEventHandler)
-
     def delayed_polling_start(self):
         # Delay to ensure server starts fully before polling begins
-        if self._polling_started is False:
-            self._polling_started = True
-            time.sleep(5)  # Adjust delay as needed
-            from .startup import start_polling
-            start_polling()
+        time.sleep(5)  # Adjust delay as needed
+        from .startup import start_polling
+        start_polling()
 
     @property
     def reactor(self):

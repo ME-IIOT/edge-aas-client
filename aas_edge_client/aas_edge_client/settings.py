@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'aas_edge_client',
     'api.interfaces',
+    'api.hardware',
     'api.sensor',
     # 'api.nameplate',
     # 'api.template',

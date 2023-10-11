@@ -12,6 +12,7 @@ from django.conf import settings
 class EdgeEvent(Enum):
     INTERFACE_REQUEST = "interface_request"
     SENSOR_REQUEST = "sensor_request"
+    HARDWARE_REQUEST = "hardware_request"
 
 # Handler base class for handling messages from the AAS Edge Client
 class EdgeEventHandler(EventHandler):
@@ -27,10 +28,12 @@ class EdgeEventHandler(EventHandler):
             # print("All 'request', 'serializer.data', and 'event_name' are available.")
             
             methods_map = {
-                ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_interfaces,
-                ('POST', EdgeEvent.INTERFACE_REQUEST): self.handle_put_interfaces,
+                ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_configuration,
+                ('POST', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_configuration,
                 ('PUT', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
                 ('POST', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
+                ('PUT', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
+                ('POST', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
                 # ('TBD', 'TBD'): self.handle_TBD,
                 # Add additional methods as needed
             }
@@ -45,7 +48,7 @@ class EdgeEventHandler(EventHandler):
         else:
             print("One or more of 'request', 'serializer.data', and 'event_name' are missing.")
 
-    def handle_put_interfaces(self, request, request_data ):
+    def handle_put_network_configuration(self, request, request_data ):
         # outputResponseJSON = []
         restHandler = RestHandler(baseUrl=settings.SERVER_URL)
         try:
@@ -58,7 +61,7 @@ class EdgeEventHandler(EventHandler):
             restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
             return True
         except:
-            print("Error in EdgeEventHandler.handle_put()")
+            print("Error in EdgeEventHandler.handle_put_network_configuration()")
     
     def handle_put_sensors(self, request, request_data ):
         restHandler = RestHandler(baseUrl=settings.SERVER_URL)
@@ -72,4 +75,18 @@ class EdgeEventHandler(EventHandler):
             restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/', data=format[0])
             return True
         except:
-            print("Error in EdgeEventHandler.handle_put()")
+            print("Error in EdgeEventHandler.handle_put_sensors()")
+
+    def handle_put_hardware(self, request, request_data):
+        restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+        try:
+            # add to list for recursive algorithm
+            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware/deep')["elem"]] #TODO: need some thing more dynamic
+            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware')
+            request_data = ordered_to_regular_dict(request_data)
+            django_response_2_aas_SM_element(request_data, format)
+            # take 1st element because of recursive algorithm
+            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
+            return True
+        except:
+            print("Error in EdgeEventHandler.handle_put_hardware()")
