@@ -1,12 +1,14 @@
 from django.db import models
 
 
-class InterfaceElements(models.Model):
-    Name = models.CharField(max_length=255, default='InterfaceEth1')  
-    IPv4Address = models.GenericIPAddressField(protocol='IPv4', null=True, blank=True)
-    IPv4SubnetMask = models.GenericIPAddressField(protocol='IPv4', null=True, blank=True)
+class InterfaceElements(models.Model): 
+    IPv4Address = models.GenericIPAddressField( null=True, blank=True)
+    IPv4SubnetMask = models.GenericIPAddressField( null=True, blank=True)
+    IPv4StandardGateway= models.GenericIPAddressField( null=True, blank=True)
+    HostName = models.CharField(max_length=255, null=True, blank=True)
+    AddressModus = models.CharField( max_length=255, null=True, blank=True)
     LinkSpeedReceiveTransmit = models.CharField(max_length=255, null=True, blank=True)
-    IPv4DNSServers = models.GenericIPAddressField(protocol='IPv4', null=True, blank=True)
+    IPv4DNSServers = models.GenericIPAddressField( null=True, blank=True)
     PrimaryDNSSuffix = models.CharField(max_length=255, null=True, blank=True)
 
 

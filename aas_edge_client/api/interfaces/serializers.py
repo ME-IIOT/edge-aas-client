@@ -5,9 +5,11 @@ class InterfaceElementsSerializer(serializers.ModelSerializer):
     class Meta:
         model = InterfaceElements
         fields = [
-            'Name', 
             'IPv4Address', 
-            'IPv4SubnetMask', 
+            'IPv4SubnetMask',
+            'IPv4StandardGateway',
+            'HostName', 
+            'AddressModus',
             'LinkSpeedReceiveTransmit', 
             'IPv4DNSServers', 
             'PrimaryDNSSuffix',

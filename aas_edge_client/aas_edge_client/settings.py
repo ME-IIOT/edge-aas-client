@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'aas_edge_client.middleware.StartupMiddleware',
 ]
 
 ROOT_URLCONF = 'aas_edge_client.urls'
@@ -150,3 +151,6 @@ import os
 AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001_AAS')
 SERVER_URL = os.environ.get('SERVER_URL', 'http://localhost:51000')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://localhost:18000')
+
+INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BASE_DIR / 'default_config/interfaces.json')
+

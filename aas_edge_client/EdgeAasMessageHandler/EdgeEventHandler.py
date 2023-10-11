@@ -7,8 +7,6 @@ from submodels_template.parser_submodel import django_response_2_aas_SM_element,
 import json
 from django.conf import settings
 
-# print(settings.BASE_DIR)
-
 
 # Event String definition
 class EdgeEvent(Enum):
@@ -19,7 +17,7 @@ class EdgeEvent(Enum):
 class EdgeEventHandler(EventHandler):
 
     def handle_event(self, *args, **kwargs):
-        print("EdgeEventHandler.handle_event() called \n args: {} \n kwargs: {}".format(args, kwargs))
+        # print("EdgeEventHandler.handle_event() called \n args: {} \n kwargs: {}".format(args, kwargs))
         
         request = kwargs.get('request', None)
         serializer_data = kwargs.get('serializer_data', None)
@@ -30,7 +28,9 @@ class EdgeEventHandler(EventHandler):
             
             methods_map = {
                 ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_interfaces,
+                ('POST', EdgeEvent.INTERFACE_REQUEST): self.handle_put_interfaces,
                 ('PUT', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
+                ('POST', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
                 # ('TBD', 'TBD'): self.handle_TBD,
                 # Add additional methods as needed
             }
@@ -38,7 +38,7 @@ class EdgeEventHandler(EventHandler):
             method_handler = methods_map.get((request.method, event_name))
             
             if method_handler:
-                print("EdgeEventHandler.handle_event() called with {} request and {} event".format(request.method, event_name))
+                # print("EdgeEventHandler.handle_event() called with {} request and {} event".format(request.method, event_name))
                 return method_handler(request = request, request_data=serializer_data)
             else:
                 print("Unsupported request method: {} or event name: {}".format(request.method, event_name))
@@ -50,12 +50,12 @@ class EdgeEventHandler(EventHandler):
         restHandler = RestHandler(baseUrl=settings.SERVER_URL)
         try:
             # add to list for recursive algorithm
-            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
-            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting')
+            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
+            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting')
             request_data = ordered_to_regular_dict(request_data)
             django_response_2_aas_SM_element(request_data, format)
             # take 1st element because of recursive algorithm
-            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/', data=format[0])
+            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
             return True
         except:
             print("Error in EdgeEventHandler.handle_put()")

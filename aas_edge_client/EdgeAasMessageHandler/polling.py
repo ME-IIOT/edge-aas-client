@@ -25,16 +25,17 @@ class Polling:
 
     def loop(self):
         while not self.stopEvent.is_set():
-            self.update()
+            self.update_interfaces()
             time.sleep(self.interval)
 
-    def update(self):
-        polledNetworkSetting = [self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/Configuration/elements/NetworkSetting/deep')["elem"]]
+    def update_interfaces(self):
+        polledNetworkSetting = [self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting/deep')["elem"]]
         translatedNetworkSetting = json.dumps(aas_SM_element_2_django_response(polledNetworkSetting))
         # should not call API directly -> lead to recursive call
 
         self.intClient.patch('/api/interfaces/', data= json.loads(translatedNetworkSetting), headers={'Content-Type': 'application/json'})
 
+    def update_sensors(self):
         polledSensors = [self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors/deep')["elem"]]
         translatedSensors = json.dumps(aas_SM_element_2_django_response(polledSensors))
         # should not call API directly -> lead to recursive call

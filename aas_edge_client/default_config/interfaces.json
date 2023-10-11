@@ -1,0 +1,24 @@
+{
+    "NetworkSetting": {
+        "InterfaceEth0": {
+            "IPv4Address": "192.168.0.10",
+            "IPv4SubnetMask": "255.255.255.0",
+            "IPv4StandardGateway": "192.168.0.1",
+            "HostName": "DefaultHost0",
+            "AddressModus": "DHCP",
+            "LinkSpeedReceiveTransmit": "1 Gbps",
+            "IPv4DNSServers": "8.8.8.8",
+            "PrimaryDNSSuffix": "default.com"
+        },
+        "InterfaceEth1": {
+            "IPv4Address": "10.0.0.5",
+            "IPv4SubnetMask": "255.255.255.0",
+            "IPv4StandardGateway": "10.0.0.1",
+            "HostName": "ExampleHost1",
+            "AddressModus": "Static",
+            "LinkSpeedReceiveTransmit": "100 Mbps",
+            "IPv4DNSServers": "192.168.1.1",
+            "PrimaryDNSSuffix": "example.com"
+        }
+    }
+}

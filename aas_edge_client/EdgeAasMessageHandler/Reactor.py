@@ -23,7 +23,7 @@ class Reactor(metaclass = Singleton):
         self.handlers = {}
 
     def register_handler(self, event_name, handler):
-        print("Reactor.register_handler() called \n event_name: {} \n handler: {}".format(event_name, handler))
+        # print("Reactor.register_handler() called \n event_name: {} \n handler: {}".format(event_name, handler))
         """Register a message handler for a specific event."""
         # should we have a check if is this child class of EventHandler?
         handlers = self.handlers.get(event_name, []) # If no handlder for this event, return empty list
@@ -40,7 +40,7 @@ class Reactor(metaclass = Singleton):
     def handle_event(self, *args, **kwargs):
         """Dispatch the event to the appropriate handler."""
         event_name = kwargs.get('event_name', None)
-        print("Reactor.handle_event() called \n event_name: {} \n args: {} \n kwargs: {}".format(event_name, args, kwargs))
+        # print("Reactor.handle_event() called \n event_name: {} \n args: {} \n kwargs: {}".format(event_name, args, kwargs))
         handlers = self.handlers.get(event_name, [])
         if handlers.__len__() == 0:
             print("No handlers registered for event: {}".format(event_name))

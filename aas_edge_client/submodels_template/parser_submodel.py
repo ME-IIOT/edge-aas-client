@@ -40,21 +40,15 @@ def transform_response(inputResponse, templateFilePath):
     return templateJson
 
 "value of elem key is in submodel/<submodel_id>/elements/<elem_id>/deep is a dictionary, but put it in a list (only 1 element) to match the recursive structure"
+# templateJSON is an in/out parameter (reference)
 def django_response_2_aas_SM_element(djangoJSON, templateJSON):
     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
-    
-# #    for key, value in inputResponseJSON.items():
-#     for index, (key, value) in enumerate(djangoJSON.items()):
-#         if isinstance(value, dict):
-#             django_response_2_aas_SM_element(value, templateJSON[index]["value"])
-#         else:
-#             templateJSON[index]["value"] = value
     for element in templateJSON:
         if isinstance(element["value"], list):
             django_response_2_aas_SM_element(djangoJSON[element["idShort"]], element["value"])
         else:
             element["value"] = djangoJSON[element["idShort"]]
-    # return templateJSON[0]
+    return templateJSON
         
 
 def aas_SM_element_2_django_response(templateJSON):
