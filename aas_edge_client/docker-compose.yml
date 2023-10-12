@@ -8,7 +8,7 @@ services:
     # container_name: django-aas-client-combi
     image: aas_edge_client-web:0.1
     ports:
-      - "18000:18000"
+      - 18000:18000
     env_file:
       - aas_client.env
     networks:               # make it use same network to connect ports
