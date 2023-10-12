@@ -30,10 +30,10 @@ This document provides straightforward steps to set up and run the AASX Server (
     ```
 2. Check the client's functionality through the following URLs:
 
-   - For Network Configuration/Network Setting SMC, visit:
+   - For NetworkConfiguration/NetworkSetting SMC, visit:
      [http://localhost:18000/api/interfaces/](http://localhost:18000/api/interfaces/)
    
    **OR**
    
-   - For System Information/Hardware SMC, visit:
+   - For SystemInformation/Hardware SMC, visit:
      [http://localhost:18000/api/hardware/](http://localhost:18000/api/hardware/)
