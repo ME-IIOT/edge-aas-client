@@ -1,5 +1,6 @@
 from .MessageHandler import MessageHandler
-from typing import List
+from .EdgeEventHandler import EdgeEventHandler
+from typing import List, Dict
 
 # Base Reactor class implementing Singleton pattern.
 # https://www.geeksforgeeks.org/singleton-pattern-in-python-a-complete-guide/
@@ -18,6 +19,7 @@ class Reactor(metaclass = Singleton):
     #     if not hasattr(cls, 'instance'):
     #         cls.instance = super(Reactor, cls).__new__(cls)
     #     return cls.instance
+    handlers: Dict[str, List[EdgeEventHandler]]
 
     def __init__(self):
         self.handlers = {}

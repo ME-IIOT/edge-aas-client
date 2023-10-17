@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'api.interfaces',
     'api.hardware',
     'api.sensor',
+    'api.NetworkConfiguration',
+    'api.SystemInformation',
     # 'api.nameplate',
     # 'api.template',
     # 'api.aasx',
@@ -55,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'aas_edge_client.middleware.StartupMiddleware', # <--- for initialization
+    # 'aas_edge_client.middleware.StartupMiddleware', # <--- for initialization
 ]
 
 ROOT_URLCONF = 'aas_edge_client.urls'

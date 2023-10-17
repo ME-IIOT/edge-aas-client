@@ -56,6 +56,7 @@ def aas_SM_element_2_django_response(templateJSON):
     # for element in inputResponseJSON: # for the SubmodelElements, there is only one element, but need to do this for recursive function
     #     for elementKey, elementValue  in element.items():
     djangoJSON = {} # init
+    
     for element in templateJSON:
         if isinstance(element["value"], list):
             djangoJSON[element["idShort"]] = aas_SM_element_2_django_response(element["value"])

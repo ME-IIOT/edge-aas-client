@@ -25,8 +25,10 @@ class Polling:
 
     def loop(self):
         while not self.stopEvent.is_set():
-            self.update_interfaces()
-            self.update_hardware()
+            # self.update_interfaces()
+            # self.update_hardware()
+            self.update_NetworkConfiguration()
+            self.update_SystemInformation()
             time.sleep(self.interval)
 
     def update_interfaces(self):
@@ -52,6 +54,41 @@ class Polling:
         # should not call API directly -> lead to recursive call
 
         self.intClient.patch('/api/hardware/', data= json.loads(translatedHardware), headers={'Content-Type': 'application/json'})
+    
+    def update_NetworkConfiguration(self):
+        response = self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/deep')
+        polledNetworkConfiguration = response["submodelElements"]
+        translatedNetworkConfiguration = json.dumps(aas_SM_element_2_django_response(polledNetworkConfiguration))
+        
+        data_NetworkConfiguration = json.loads(translatedNetworkConfiguration)
+        
+        try:
+            from datetime import datetime
+
+            datetime_obj = datetime.strptime(data_NetworkConfiguration["LastUpdate"], '%m/%d/%Y %H:%M:%S')
+            data_NetworkConfiguration["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S')
+        except:
+            data_NetworkConfiguration["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
+        self.intClient.patch('/api/NetworkConfiguration/',data=data_NetworkConfiguration, headers={'Content-Type': 'application/json'})
+
+    def update_SystemInformation(self):
+        response = self.extClient.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/deep')
+        polledSystemInformation = response["submodelElements"]
+        translatedSystemInformation = json.dumps(aas_SM_element_2_django_response(polledSystemInformation))
+        
+        data_SystemInformation = json.loads(translatedSystemInformation)
+        try:
+            from datetime import datetime
+
+            datetime_obj = datetime.strptime(data_SystemInformation["LastUpdate"], '%m/%d/%Y %H:%M:%S')
+            data_SystemInformation["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S')
+        except:
+            data_SystemInformation["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+
+        self.intClient.patch('/api/SystemInformation/',data=data_SystemInformation, headers={'Content-Type': 'application/json'})
 
     def stop(self):
         self.stopEvent.set()
+
+    
