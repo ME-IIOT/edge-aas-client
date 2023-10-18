@@ -34,9 +34,12 @@
       <nav class="navbar navbar-custom">
         <div class="container-fluid ">
           <div class="navbar-header">
-            <a href="https://www.murrelektronik.com/de/" class="navbar-left"><img src="{% static 'vendor_images/murrWhite.png' %}"></a>
+            {% comment %} <a href="https://www.murrelektronik.com/de/" class="navbar-left"><img src="{% static 'vendor_images/murrWhite.png' %}"></a> {% endcomment %}
+            <a href="{{ VENDOR_LINK }}" class="navbar-left"><img src="{% static 'vendor_images/murrWhite.png' %}"></a>
+            
             <a class='navbar-brand' rel="nofollow" href='https://www.murrelektronik.com/de/'>
-              Murrelektronik
+              {% comment %} Murrelektronik {% endcomment %}
+              {{ VENDOR_NAME }}
             </a>
           </div>
         </div>

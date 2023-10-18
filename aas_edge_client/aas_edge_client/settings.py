@@ -82,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'aas_edge_client.context_processor.vendor_details'
             ],
         },
     },
@@ -156,4 +157,8 @@ SERVER_URL = os.environ.get('SERVER_URL', 'http://0.0.0.0:51000')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://0.0.0.0:18000')
 
 INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BASE_DIR / 'default_config/interfaces.json')
+
+VENDOR_NAME = os.environ.get('VENDOR_NAME', 'Murrelektronik-TEST')
+VENDOR_LINK = os.environ.get('VENDOR_LINK', 'https://www.murrelektronik.com/de/')
+
 
