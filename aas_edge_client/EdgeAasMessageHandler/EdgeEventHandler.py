@@ -13,6 +13,8 @@ class EdgeEvent(Enum):
     INTERFACE_REQUEST = "interface_request"
     SENSOR_REQUEST = "sensor_request"
     HARDWARE_REQUEST = "hardware_request"
+    NETWORK_CONFIGURATION_REQUEST = "network_configuration_request"
+    SYSTEM_INFORMATION_REQUEST = "system_information_request"
 
 # Handler base class for handling messages from the AAS Edge Client
 class EdgeEventHandler(EventHandler):
@@ -28,12 +30,18 @@ class EdgeEventHandler(EventHandler):
             # print("All 'request', 'serializer.data', and 'event_name' are available.")
             
             methods_map = {
-                ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_configuration,
-                ('POST', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_configuration,
-                ('PUT', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
-                ('POST', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
-                ('PUT', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
-                ('POST', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
+                # ('PUT', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_setting,
+                # ('POST', EdgeEvent.INTERFACE_REQUEST): self.handle_put_network_setting,
+                # ('PUT', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
+                # ('POST', EdgeEvent.SENSOR_REQUEST): self.handle_put_sensors,
+                # ('PUT', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
+                # ('POST', EdgeEvent.HARDWARE_REQUEST): self.handle_put_hardware,
+                ('PUT', EdgeEvent.NETWORK_CONFIGURATION_REQUEST): self.handle_put_network_configuration,
+                ('POST', EdgeEvent.NETWORK_CONFIGURATION_REQUEST): self.handle_put_network_configuration,
+                ('PATCH', EdgeEvent.NETWORK_CONFIGURATION_REQUEST): self.handle_put_network_configuration,
+                ('PUT', EdgeEvent.SYSTEM_INFORMATION_REQUEST): self.handle_put_system_information,
+                ('POST', EdgeEvent.SYSTEM_INFORMATION_REQUEST): self.handle_put_system_information,
+                ('PATCH', EdgeEvent.SYSTEM_INFORMATION_REQUEST): self.handle_put_system_information,
                 # ('TBD', 'TBD'): self.handle_TBD,
                 # Add additional methods as needed
             }
@@ -48,45 +56,69 @@ class EdgeEventHandler(EventHandler):
         else:
             print("One or more of 'request', 'serializer.data', and 'event_name' are missing.")
 
-    def handle_put_network_configuration(self, request, request_data ):
-        # outputResponseJSON = []
+    # def handle_put_network_setting(self, request, request_data ):
+    #     # outputResponseJSON = []
+    #     restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+    #     try:
+    #         # add to list for recursive algorithm
+    #         format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
+    #         restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting')
+    #         request_data = ordered_to_regular_dict(request_data)
+    #         django_response_2_aas_SM_element(request_data, format)
+    #         # take 1st element because of recursive algorithm
+    #         restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
+    #         return True
+    #     except:
+    #         print("Error in EdgeEventHandler.handle_put_network_configuration()")
+    
+    # def handle_put_sensors(self, request, request_data ):
+    #     restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+    #     try:
+    #         # add to list for recursive algorithm
+    #         format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors/deep')["elem"]] #TODO: need some thing more dynamic
+    #         restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors')
+    #         request_data = ordered_to_regular_dict(request_data)
+    #         django_response_2_aas_SM_element(request_data, format)
+    #         # take 1st element because of recursive algorithm
+    #         restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/', data=format[0])
+    #         return True
+    #     except:
+    #         print("Error in EdgeEventHandler.handle_put_sensors()")
+
+    # def handle_put_hardware(self, request, request_data):
+    #     restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+    #     try:
+    #         # add to list for recursive algorithm
+    #         format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware/deep')["elem"]] #TODO: need some thing more dynamic
+    #         restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware')
+    #         request_data = ordered_to_regular_dict(request_data)
+    #         django_response_2_aas_SM_element(request_data, format)
+    #         # take 1st element because of recursive algorithm
+    #         restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
+    #         return True
+    #     except:
+    #         print("Error in EdgeEventHandler.handle_put_hardware()")
+
+    def handle_put_network_configuration(self, request, request_data):
         restHandler = RestHandler(baseUrl=settings.SERVER_URL)
         try:
-            # add to list for recursive algorithm
-            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting/deep')["elem"]] #TODO: need some thing more dynamic
-            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/NetworkSetting')
-            request_data = ordered_to_regular_dict(request_data)
-            django_response_2_aas_SM_element(request_data, format)
-            # take 1st element because of recursive algorithm
-            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
-            return True
+            for key, value in request_data.items():
+                format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}/deep')["elem"]] #TODO: need some thing more dynamic
+                restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}')
+                request_data = ordered_to_regular_dict({key:value})
+                django_response_2_aas_SM_element(request_data, format)
+                restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
         except:
             print("Error in EdgeEventHandler.handle_put_network_configuration()")
-    
-    def handle_put_sensors(self, request, request_data ):
-        restHandler = RestHandler(baseUrl=settings.SERVER_URL)
-        try:
-            # add to list for recursive algorithm
-            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors/deep')["elem"]] #TODO: need some thing more dynamic
-            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/Sensors')
-            request_data = ordered_to_regular_dict(request_data)
-            django_response_2_aas_SM_element(request_data, format)
-            # take 1st element because of recursive algorithm
-            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/ProcessData/elements/', data=format[0])
-            return True
-        except:
-            print("Error in EdgeEventHandler.handle_put_sensors()")
 
-    def handle_put_hardware(self, request, request_data):
-        restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+    def handle_put_system_information(self,request, request_data):
+        restHandlder = RestHandler(baseUrl=settings.SERVER_URL)
         try:
-            # add to list for recursive algorithm
-            format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware/deep')["elem"]] #TODO: need some thing more dynamic
-            restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/Hardware')
-            request_data = ordered_to_regular_dict(request_data)
-            django_response_2_aas_SM_element(request_data, format)
-            # take 1st element because of recursive algorithm
-            restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
-            return True
+            for key, value in request_data.items():
+                format = [restHandlder.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}/deep')["elem"]]
+                restHandlder.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}')
+                request_data = ordered_to_regular_dict({key:value})
+                django_response_2_aas_SM_element(request_data, format)
+                restHandlder.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
         except:
-            print("Error in EdgeEventHandler.handle_put_hardware()")
+            print("Error in EdgeEventHandler.handle_put_system_information()")

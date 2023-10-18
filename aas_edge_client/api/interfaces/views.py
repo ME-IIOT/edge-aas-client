@@ -38,7 +38,7 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
             self.reactor.handle_event( request=request,event_name = EdgeEvent.INTERFACE_REQUEST, serializer_data=serializer.data)
             return super().create(request, *args, **kwargs)
         else:
-            return Response('Not valid data', status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     # will be redirected to the detail view of the first instance (only one instance of NetworkSetting)
     def list(self, request, *args, **kwargs):
@@ -71,11 +71,10 @@ class NetworkSettingViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
 
-
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
+       
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 

@@ -33,7 +33,7 @@ class HardwareViewSet(viewsets.ModelViewSet):
             self.reactor.handle_event( request=request,event_name = EdgeEvent.HARDWARE_REQUEST, serializer_data=serializer.data)
             return super().create(request, *args, **kwargs)
         else:
-            return Response('Not valid data', status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
         
     def list(self, request, *args, **kwargs):
         instance = self.queryset.first()
