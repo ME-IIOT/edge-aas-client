@@ -13,7 +13,8 @@ services:
       - aas_client.env
     networks:               # make it use same network to connect ports
       - mynetwork
-  
+    volumes: # for vendor images
+      - ./vendor_images:/code/static/vendor_images
 
   aasx-server-idta:
     # container_name: aasx-server-blazor-combi
