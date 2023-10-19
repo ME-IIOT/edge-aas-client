@@ -162,5 +162,6 @@ INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BA
 
 VENDOR_NAME = os.environ.get('VENDOR_NAME', 'Murrelektronik-TEST')
 VENDOR_LINK = os.environ.get('VENDOR_LINK', 'https://www.murrelektronik.com/de/')
-
+PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
+SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 

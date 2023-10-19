@@ -5,7 +5,7 @@
                 a single block in the template.
 
                 */
-
+                
                 .form-actions {
                     background: transparent;
                     border-top-color: transparent;
@@ -24,13 +24,13 @@
                   .btn {
                     color: #ffffff;
                     font-weight: bold;
-                    background-color: #55B410;
+                    background-color: var(--primary-color);
                     border-color: #ffffff;
                   }
                   .btn:hover {
                     color: #D9D9D9;
                     font-weight: bold;
-                    background-color: #164C0C;
+                    background-color: var(--secondary-color);
                     border-color: #ffffff;
                   }
     
@@ -52,10 +52,10 @@
                   }
     
                   .navbar {
-                    background: #55B410;
+                    background: var(--primary-color);
                     color: white;
                     border: none;
-                    border-top: 5px solid #55B410;
+                    border-top: 5px solid var(--primary-color);
                     border-radius: 0px;
                   }
     
@@ -68,7 +68,7 @@
                   }
     
                   .navbar .dropdown-menu li a, .navbar .dropdown-menu li {
-                    color: #55B410;
+                    color: var(--primary-color);
                   }
     
                   .navbar .dropdown-menu li a:hover {
@@ -81,7 +81,7 @@
                   }
     
                   .breadcrumb li.active a {
-                    color: #164C0C;
+                    color: var(--secondary-color);
                   }
     
                   .pagination>.disabled>a,
@@ -216,15 +216,15 @@
     
                   /* custom general page styles */
                   .hero-unit h1, .hero-unit h2 {
-                    color: #55B410;
+                    color: var(--primary-color);
                   }
     
                   body a {
-                    color: #55B410;
+                    color: var(--primary-color);
                   }
     
                   body a:hover {
-                    color: #01450b;
+                    color: var(--secondary-color)
                   }
     
                   .request-info {
@@ -251,7 +251,7 @@
                   }
     
                   .navbar-custom {
-                    background-color: #55B410;
+                    background-color: var(--primary-color);
                   }
     
                   .navbar-header > a{
