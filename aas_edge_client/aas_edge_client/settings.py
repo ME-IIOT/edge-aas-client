@@ -149,13 +149,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CLIENT_URL = 'http://localhost:8000'
 
-os.environ['ORG_NAME'] = 'Test'
+
 
 import os
 
 AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001_AAS')
 SERVER_URL = os.environ.get('SERVER_URL', 'http://0.0.0.0:51000')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://0.0.0.0:18000')
-ORG_NAME = os.environ.get('ORG_NAME', 'Test')
+
 INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BASE_DIR / 'default_config/interfaces.json')
 
