@@ -1,5 +1,7 @@
 # Use Python 3.10.9
-FROM python:3.10.9
+ARG ARCH=
+FROM ${ARCH}python:3.10-slim
+# FROM python:3.10
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -9,10 +11,11 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 # Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends gcc libpq-dev
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
 
 # Install Python dependencies
 COPY requirements.txt /code/
