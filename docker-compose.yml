@@ -6,14 +6,15 @@ networks:
 services:
   web:
     # container_name: django-aas-client-combi
-    image: manhlinh210/aas_edge_client-web:0.1
+    image: manhlinh210/aas_edge_client-web:amd64-1.0.0
     ports:
       - 18000:18000
     env_file:
       - aas_client.env
     networks:               # make it use same network to connect ports
       - mynetwork
-  
+    volumes: # for vendor images
+      - ./vendor_images:/code/static/vendor_images
 
   aasx-server-idta:
     # container_name: aasx-server-blazor-combi
