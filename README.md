@@ -17,6 +17,16 @@ The demo server support AAS v2.
 ## AAS Client 
 The client **simulates** gateway edge device configuration with internal Database and sync with AAS server.
 
+### Configuring the Docker Image for Your Architecture
+
+To set up the client image tailored for your system's architecture, update the `docker-compose.yaml` file. You have three architectural options to select from:
+
+- **amd64**: `manhlinh210/aas_edge_client-web:amd64-1.0.0`
+  
+- **arm32v7**: `manhlinh210/aas_edge_client-web:arm32v7-1.0.0`
+  
+- **arm64v8**: `manhlinh210/aas_edge_client-web:arm64v8-1.0.0`
+
 ### Configuring the ENV File
 
 - Ensure that you substitute the placeholder with your actual device AAS identifier:
