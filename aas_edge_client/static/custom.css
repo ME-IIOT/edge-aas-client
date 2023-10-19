@@ -273,3 +273,8 @@
                   .navbar-custom .navbar-text:hover {
                       color: #D9D9D9;
                   }
+                  body {
+                    background-color: #ffffff; 
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif; }
