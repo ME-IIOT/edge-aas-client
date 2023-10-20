@@ -108,8 +108,11 @@ class EdgeEventHandler(EventHandler):
                 request_data = ordered_to_regular_dict({key:value})
                 django_response_2_aas_SM_element(request_data, format)
                 restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
-        except:
+        except Exception as e:
+            print(f"error {e}")
             print("Error in EdgeEventHandler.handle_put_network_configuration()")
+            print(key, value)
+            print(request.data)
 
     def handle_put_system_information(self,request, request_data):
         restHandlder = RestHandler(baseUrl=settings.SERVER_URL)

@@ -13,8 +13,8 @@ class InterfaceSerializer(serializers.ModelSerializer):
             'IPv4Address', 
             'IPv4SubnetMask',
             'IPv4StandardGateway',
-            'HostName', 
-            'AddressModus',
+            'Name', 
+            'AddressMode',
             'LinkSpeedReceiveTransmit', 
             'IPv4DNSServers', 
             'PrimaryDNSSuffix',
@@ -58,7 +58,7 @@ class NetworkSettingSerializer(serializers.ModelSerializer):
 class NetworkConfigurationSerializer(serializers.ModelSerializer):
     NetworkSetting = NetworkSettingSerializer()  # Reusing the NetworkSettingSerializer you provided
     LastUpdate = serializers.DateTimeField(input_formats=['%Y-%m-%dT%H:%M:%S'])
-    
+
     class Meta:
         model = NetworkConfiguration
         fields = ['NetworkSetting', 'LastUpdate']
