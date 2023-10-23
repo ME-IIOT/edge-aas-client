@@ -1,0 +1,41 @@
+version: '3.8'
+
+networks:
+  mynetwork:
+
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto
+    ports:
+      - "28883:1883"
+      - "28884:9001"
+    networks:
+      - mynetwork
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    
+
+  web:
+    # container_name: django-aas-client-combi
+    image: manhlinh210/aas_edge_client-web:amd64-1.0.0
+    ports:
+      - 18000:18000
+    depends_on:
+      - mqtt-broker
+    env_file:
+      - aas_client.env
+    networks:               # make it use same network to connect ports
+      - mynetwork
+    volumes: # for vendor images
+      - ./vendor_images:/code/static/vendor_images
+
+  aasx-server-idta:
+    # container_name: aasx-server-blazor-combi
+    image: "adminshellio/aasx-server-blazor-for-demo:v2022-07-25.alpha"
+    ports:
+      - 5001:5001
+      - 51000:51310
+    volumes:
+      - ./aasxs:/AasxServerBlazor/aasxs
+    networks:               # make it use same network to connect ports
+      - mynetwork
