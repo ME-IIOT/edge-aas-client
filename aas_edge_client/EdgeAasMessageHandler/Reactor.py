@@ -14,11 +14,6 @@ class Singleton(type):
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 class Reactor(metaclass = Singleton):
-    # # Singleton instance
-    # def __new__(cls):
-    #     if not hasattr(cls, 'instance'):
-    #         cls.instance = super(Reactor, cls).__new__(cls)
-    #     return cls.instance
     handlers: Dict[str, List[EdgeEventHandler]]
 
     def __init__(self):

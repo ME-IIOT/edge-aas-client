@@ -57,7 +57,7 @@ class NetworkSettingSerializer(serializers.ModelSerializer):
 
 class NetworkConfigurationSerializer(serializers.ModelSerializer):
     NetworkSetting = NetworkSettingSerializer()  # Reusing the NetworkSettingSerializer you provided
-    LastUpdate = serializers.DateTimeField(input_formats=['%Y-%m-%dT%H:%M:%S'])
+    LastUpdate = serializers.DateTimeField(input_formats=['%Y-%m-%dT%H:%M:%SZ'])
 
     class Meta:
         model = NetworkConfiguration

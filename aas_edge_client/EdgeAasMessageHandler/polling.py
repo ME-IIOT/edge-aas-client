@@ -14,15 +14,6 @@ class Polling:
         self.stopEvent = stopEvent
         self.interval = interval
 
-    # def get(self):
-    #     pass
-
-    # def post(self):
-    #     pass
-
-    # def put(self):
-    #     pass
-
     def loop(self):
         while not self.stopEvent.is_set():
             # self.update_interfaces()
@@ -66,9 +57,9 @@ class Polling:
             from datetime import datetime
 
             datetime_obj = datetime.strptime(data_NetworkConfiguration["LastUpdate"], '%m/%d/%Y %H:%M:%S')
-            data_NetworkConfiguration["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S')
+            data_NetworkConfiguration["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%SZ')
         except:
-            data_NetworkConfiguration["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            data_NetworkConfiguration["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 
         self.intClient.patch('/api/NetworkConfiguration/',data=data_NetworkConfiguration, headers={'Content-Type': 'application/json'})
 
@@ -82,9 +73,9 @@ class Polling:
             from datetime import datetime
 
             datetime_obj = datetime.strptime(data_SystemInformation["LastUpdate"], '%m/%d/%Y %H:%M:%S')
-            data_SystemInformation["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%S')
+            data_SystemInformation["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%SZ')
         except:
-            data_SystemInformation["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            data_SystemInformation["LastUpdate"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 
         self.intClient.patch('/api/SystemInformation/',data=data_SystemInformation, headers={'Content-Type': 'application/json'})
 

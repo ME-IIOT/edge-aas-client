@@ -10,7 +10,34 @@ from EdgeAasMessageHandler.Reactor import Reactor
 from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
 from datetime import datetime
 from django.utils import timezone
+from EdgeAasMessageHandler.MqttHandler import MqttHandler
+import requests
+import json
+import atexit
 
+def handle_mqtt_system_information_put(message_topic:str, message_payload: str) -> None:
+    try:
+        payload_json = json.loads(message_payload)
+    except json.JSONDecodeError:
+        print(f"Failed to decode JSON from message on {message_topic}")
+        return
+    
+    url = f'{settings.CLIENT_URL}/api/SystemInformation/'
+    headers = {'Content-Type': 'application/json'}
+    response = requests.put(url, json=payload_json, headers=headers)
+
+    if response.status_code == 200:
+        # print(f'Successfully updated system information')
+        pass
+    else:
+        print(f'Failed to update system information')
+
+SImqttHandler = MqttHandler(handlerName="System Information MQTT")
+SImqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
+SImqttHandler.loop_start()
+SImqttHandler.subscribe(topic='ClientSystemInformationChange')
+SImqttHandler.set_message_callback(handle_mqtt_system_information_put)
+atexit.register(SImqttHandler.shutdown)
 class SystemInformationViewSet(viewsets.ModelViewSet):
     queryset = SystemInformation.objects.all()
     serializer_class = SystemInformationSerializer
@@ -68,7 +95,7 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if not request_last_update:
             return Response({'detail': 'LastUpdate is missing in request data'}, status=status.HTTP_400_BAD_REQUEST)
 
-        request_datetime = datetime.strptime(request_last_update, '%Y-%m-%dT%H:%M:%S')
+        request_datetime = datetime.strptime(request_last_update, '%Y-%m-%dT%H:%M:%SZ')
 
         instance = self.queryset.first()
         if not instance:
@@ -95,6 +122,8 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
                 event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
                 serializer_data=serializer.data
             )
+            payload_json = json.dumps(serializer.data)
+            SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

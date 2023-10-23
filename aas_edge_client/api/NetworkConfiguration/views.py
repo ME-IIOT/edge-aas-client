@@ -12,7 +12,6 @@ from datetime import datetime
 from django.utils import timezone
 from EdgeAasMessageHandler.MqttHandler import MqttHandler
 import requests
-from paho.mqtt.client import Client, MQTTMessage
 import json
 import atexit
 
@@ -74,6 +73,7 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         raise Http404("No NetworkConfiguration object available. Use POST to create.")
     
     def update(self, request, *args, **kwargs):
+
         instance = self.queryset.first()
         if not instance:
             return Response({"detail": "No NetworkConfiguration object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
@@ -92,14 +92,13 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
         
     def patch(self, request, *args, **kwargs):
-        
         # Fetch the LastUpdate value from the request
         request_last_update = request.data.get('LastUpdate')
         if not request_last_update:
             return Response({'detail': 'LastUpdate is missing in request data'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Convert the request's LastUpdate value to a datetime object
-        request_datetime = datetime.strptime(request_last_update, '%Y-%m-%dT%H:%M:%S')
+        request_datetime = datetime.strptime(request_last_update, '%Y-%m-%dT%H:%M:%SZ')
 
         instance = self.queryset.first()
         if not instance:

@@ -79,9 +79,6 @@ class MqttHandler(IMqttHandler):
         self._client.on_message = self._on_message
 
     def _on_message(self, client, userdata, message) -> None:
-        print(f"Update from topic {message.topic}")
-        print(message.payload.decode())
-        print(type(message.payload.decode()))
         if self._message_callback:
             self._message_callback(message.topic, message.payload.decode())
 
@@ -104,7 +101,6 @@ class MqttHandler(IMqttHandler):
         self._client.unsubscribe(topic)
 
     def publish(self, topic: str, payload: Optional[str], qos: int = 0, retain: bool = False) -> None:
-        print(f"{self.handlerName} publish to topic {topic}")
         self._client.publish(topic, payload, qos, retain)
 
     def set_message_callback(self, callback: Callable[[str, str], None]) -> None:

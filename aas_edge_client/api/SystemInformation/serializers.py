@@ -64,7 +64,7 @@ class HardwareSerializer(serializers.ModelSerializer):
 
 class SystemInformationSerializer(serializers.ModelSerializer):
     Hardware = HardwareSerializer()
-    LastUpdate = serializers.DateTimeField(input_formats=['%Y-%m-%dT%H:%M:%S'])
+    LastUpdate = serializers.DateTimeField(input_formats=['%Y-%m-%dT%H:%M:%SZ'])
     
     class Meta:
         model = SystemInformation
