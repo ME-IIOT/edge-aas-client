@@ -10,13 +10,41 @@ from EdgeAasMessageHandler.Reactor import Reactor
 from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
 from datetime import datetime
 from django.utils import timezone
+from EdgeAasMessageHandler.MqttHandler import MqttHandler
+import requests
+from paho.mqtt.client import Client, MQTTMessage
+import json
+import atexit
 
+def handle_mqtt_network_configuration_put(message_topic: str, message_payload:str) -> None:
+    try:
+        payload_json = json.loads(message_payload)
+    except json.JSONDecodeError:
+        print(f"Failed to decode JSON from message on {message_topic}")
+        return
+    
+    url = f'{settings.CLIENT_URL}/api/NetworkConfiguration/'
+    headers = {'Content-Type': 'application/json'}
+    response = requests.put(url, json=payload_json, headers=headers)
+
+    if response.status_code == 200:
+        print(f'Successfully updated network configuration')
+    else:
+        print(f'Failed to update network configuration')
+
+NCmqttHandler = MqttHandler(handlerName="Network Configuration MQTT")
+NCmqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
+NCmqttHandler.loop_start()
+NCmqttHandler.subscribe(topic='ClientNetworkConfigurationChange')
+NCmqttHandler.set_message_callback(handle_mqtt_network_configuration_put)
+atexit.register(NCmqttHandler.shutdown)
 
 class NetworkConfigurationViewSet(viewsets.ModelViewSet):
     queryset = NetworkConfiguration.objects.all()
     serializer_class = NetworkConfigurationSerializer
 
     reactor = Reactor()
+    
 
     reactor.register_handler(EdgeEvent.NETWORK_CONFIGURATION_REQUEST, EdgeEventHandler())
 
@@ -99,6 +127,8 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
                 event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
                 serializer_data=serializer.data
             )
+            payload_json = json.dumps(serializer.data)
+            NCmqttHandler.publish(topic='ServerNetworkConfigurationChange', payload=payload_json)
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)

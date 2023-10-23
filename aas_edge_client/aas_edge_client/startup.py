@@ -10,6 +10,7 @@ def start_polling():
     # internal_url = "http://localhost:8000"
     external_url = settings.SERVER_URL
     internal_url = settings.CLIENT_URL
+
     stop_event = Event()
     polling_interval = 10 
 

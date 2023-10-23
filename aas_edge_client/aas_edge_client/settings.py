@@ -167,8 +167,11 @@ VENDOR_LINK = os.environ.get('VENDOR_LINK', '')
 PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
 SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 
-TEXT_COLOR = os.environ.get('TEXT_COLOR', '#000000')
-BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
+TEXT_COLOR = os.environ.get('TEXT_COLOR', '#0000FF')
+BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#FFFFFF')
+
+MQTT_BROKER_HOST = os.environ.get('MQTT_BROKER_HOST', 'localhost')
+MQTT_BROKER_PORT = os.environ.get('MQTT_BROKER_PORT', 1883)
 
 
 
