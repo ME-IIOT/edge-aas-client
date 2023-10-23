@@ -21,10 +21,9 @@
                 :root{
                     --primary-color: {{ PRIMARY_COLOR }};
                     --secondary-color: {{ SECONDARY_COLOR }};
+                    --text-color: {{TEXT_COLOR}};
+                    --button-color:{{BUTTON_COLOR}};
                 }
-                .navbar-brand {
-                    color: {{ VENDOR_TEXT_COLOR }} ; 
-                } 
               </style>
               <link rel="stylesheet" href="{% static 'custom.css' %}"/>
             {% endblock %}

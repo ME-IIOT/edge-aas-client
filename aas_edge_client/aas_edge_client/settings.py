@@ -163,7 +163,12 @@ INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BA
 
 VENDOR_NAME = os.environ.get('VENDOR_NAME', 'VendorName')
 VENDOR_LINK = os.environ.get('VENDOR_LINK', '')
+
 PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
 SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
-VENDOR_TEXT_COLOR = os.environ.get('VENDOR_TEXT_COLOR', '#FF00FF')
+
+TEXT_COLOR = os.environ.get('TEXT_COLOR', '#000000')
+BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
+
+
 

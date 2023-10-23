@@ -6,5 +6,6 @@ def vendor_details(request):
         'VENDOR_LINK': settings.VENDOR_LINK,
         'PRIMARY_COLOR': settings.PRIMARY_COLOR,
         'SECONDARY_COLOR': settings.SECONDARY_COLOR,
-        'VENDOR_TEXT_COLOR': settings.VENDOR_TEXT_COLOR,
+        'TEXT_COLOR': settings.TEXT_COLOR,
+        'BUTTON_COLOR' : settings.BUTTON_COLOR,
     }
