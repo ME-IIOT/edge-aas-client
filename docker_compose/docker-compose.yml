@@ -4,15 +4,15 @@ networks:
   mynetwork:
 
 services:
-  mqtt-broker:
-    image: eclipse-mosquitto
-    ports:
-      - "28883:1883"
-      - "28884:9001"
-    networks:
-      - mynetwork
-    volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+#   mqtt-broker:
+#     image: eclipse-mosquitto
+#     ports:
+#       - "28883:1883"
+#       - "28884:9001"
+#     networks:
+#       - mynetwork
+#     volumes:
+#       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
     
 
   web:
@@ -20,8 +20,8 @@ services:
     image: manhlinh210/aas_edge_client-web:amd64-1.0.0
     ports:
       - 18000:18000
-    depends_on:
-      - mqtt-broker
+    # depends_on:
+    #   - mqtt-broker
     env_file:
       - aas_client.env
     networks:               # make it use same network to connect ports

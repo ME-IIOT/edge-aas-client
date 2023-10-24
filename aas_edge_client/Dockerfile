@@ -12,7 +12,7 @@ WORKDIR /code
 
 # Install system dependencies
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends gcc libpq-dev
+RUN apt-get install -y --no-install-recommends gcc libpq-dev iproute2 procps
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
