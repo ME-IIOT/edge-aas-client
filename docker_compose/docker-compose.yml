@@ -28,6 +28,7 @@ services:
       - mynetwork
     volumes: # for vendor images
       - ./vendor_images:/code/static/vendor_images
+      - ./mounted_script:/code/staticfiles/mounted_script
 
   aasx-server-idta:
     # container_name: aasx-server-blazor-combi

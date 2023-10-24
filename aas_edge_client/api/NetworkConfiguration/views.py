@@ -31,12 +31,12 @@ def handle_mqtt_network_configuration_put(message_topic: str, message_payload:st
     else:
         print(f'Failed to update network configuration')
 
-NCmqttHandler = MqttHandler(handlerName="Network Configuration MQTT")
-NCmqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
-NCmqttHandler.loop_start()
-NCmqttHandler.subscribe(topic='ClientNetworkConfigurationChange')
-NCmqttHandler.set_message_callback(handle_mqtt_network_configuration_put)
-atexit.register(NCmqttHandler.shutdown)
+# NCmqttHandler = MqttHandler(handlerName="Network Configuration MQTT")
+# NCmqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
+# NCmqttHandler.loop_start()
+# NCmqttHandler.subscribe(topic='ClientNetworkConfigurationChange')
+# NCmqttHandler.set_message_callback(handle_mqtt_network_configuration_put)
+# atexit.register(NCmqttHandler.shutdown)
 
 class NetworkConfigurationViewSet(viewsets.ModelViewSet):
     queryset = NetworkConfiguration.objects.all()
@@ -127,7 +127,7 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
                 serializer_data=serializer.data
             )
             payload_json = json.dumps(serializer.data)
-            NCmqttHandler.publish(topic='ServerNetworkConfigurationChange', payload=payload_json)
+            # NCmqttHandler.publish(topic='ServerNetworkConfigurationChange', payload=payload_json)
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)

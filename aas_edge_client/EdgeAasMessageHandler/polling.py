@@ -4,9 +4,11 @@ from .RestHandler import RestHandler
 from submodels_template.parser_submodel import aas_SM_element_2_django_response
 import json
 from django.conf import settings
-class Polling:
+from threading import Event
+import subprocess
+class AASX_Server_Polling:
 
-    def __init__(self, extUrl: str, intUrl: str, stopEvent, interval: int):
+    def __init__(self, extUrl: str, intUrl: str, stopEvent: Event, interval: int):
         # better using MQTT, an MQTT server on AAS, if there is a change on it -> publish message to the broker, client on edge device will receive the message
         # if there is a change in id (change revision, version...) -> logic broken. Need mqtt notify the change
         self.extClient = RestHandler(baseUrl=extUrl)
@@ -82,4 +84,35 @@ class Polling:
     def stop(self):
         self.stopEvent.set()
 
-    
+
+class ClientPolling:
+    def __init__(self, intUrl: str , stopEvent: Event, interval: int):
+        self.intClient = RestHandler(baseUrl=intUrl)
+        self.stopEvent = stopEvent
+        self.interval = interval
+
+    def loop(self):
+        while not self.stopEvent.is_set():
+            self.update_SystemInformation()
+            time.sleep(self.interval)
+
+    def update_SystemInformation(self):
+        # Define the path to the script
+        script_path = settings.STATIC_ROOT + '/mounted_script/sysInfo.sh'
+
+        # Call the script using subprocess
+        result = subprocess.run(['bash', script_path], capture_output=True, text=True)
+
+        # Check for errors
+        if result.returncode != 0:
+            print(f'Error executing script: {result.stderr}')
+            return
+
+        # Print the JSON output
+        json_output = json.loads(result.stdout)
+
+        self.intClient.patch('/api/SystemInformation/',data=json_output, headers={'Content-Type': 'application/json'})
+
+    def stop(self):
+        self.stopEvent.set()
+

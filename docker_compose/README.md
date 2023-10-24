@@ -37,9 +37,6 @@ To set up the client image tailored for your system's architecture, update the `
     PRIMARY_COLOR=<color_of_header>
     TEXT_COLOR=<text_color>
     BUTTON_COLOR=<color_of_the_button>
-
-    MQTT_BROKER_HOST=<>
-    MQTT_BROKER_PORT=<>
     ```
 
 - To update your logo, place your company's `logo.png` in the `vendor_images` folder and rename it to `vendorImages.png`.

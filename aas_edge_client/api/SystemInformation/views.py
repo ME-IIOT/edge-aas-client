@@ -32,12 +32,12 @@ def handle_mqtt_system_information_put(message_topic:str, message_payload: str) 
     else:
         print(f'Failed to update system information')
 
-SImqttHandler = MqttHandler(handlerName="System Information MQTT")
-SImqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
-SImqttHandler.loop_start()
-SImqttHandler.subscribe(topic='ClientSystemInformationChange')
-SImqttHandler.set_message_callback(handle_mqtt_system_information_put)
-atexit.register(SImqttHandler.shutdown)
+# SImqttHandler = MqttHandler(handlerName="System Information MQTT")
+# SImqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
+# SImqttHandler.loop_start()
+# SImqttHandler.subscribe(topic='ClientSystemInformationChange')
+# SImqttHandler.set_message_callback(handle_mqtt_system_information_put)
+# atexit.register(SImqttHandler.shutdown)
 class SystemInformationViewSet(viewsets.ModelViewSet):
     queryset = SystemInformation.objects.all()
     serializer_class = SystemInformationSerializer
@@ -123,7 +123,7 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
                 serializer_data=serializer.data
             )
             payload_json = json.dumps(serializer.data)
-            SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
+            # SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
