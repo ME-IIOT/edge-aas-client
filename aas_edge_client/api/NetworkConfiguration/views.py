@@ -78,7 +78,12 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         if not instance:
             return Response({"detail": "No NetworkConfiguration object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        modified_request_data = request.data.copy()
+        modified_request_data['LastUpdate'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
+        # serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -89,7 +94,7 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
             )
             return Response(serializer.data)
         else:
-            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(serializer.error, status=status.HTTP_406_NOT_ACCEPTABLE)
         
     def patch(self, request, *args, **kwargs):
         # Fetch the LastUpdate value from the request
@@ -138,7 +143,12 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         if not instance:
             return Response({"detail": "No NetworkConfiguration object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        modified_request_data = request.data.copy()
+        modified_request_data['LastUpdate'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
+        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
+        
+        # serializer = self.get_serializer(instance, data=request.data, partial=True)
+
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()

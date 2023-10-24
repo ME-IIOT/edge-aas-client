@@ -13,21 +13,19 @@ def start_polling():
     # Common stop event
     stop_event = Event()
 
-    # Server polling setup
-    server_polling_interval = 10 
+    # Server polling setup 
     server_polling = AASX_Server_Polling(
         extUrl=external_url, 
         intUrl=client_url, 
         stopEvent=stop_event,
-        interval=server_polling_interval
+        interval=settings.SERVER_POLLING_INTERVAL
     )
 
-    # Client polling setup
-    client_polling_interval = 5 
+    # Client polling setup 
     client_polling = ClientPolling(
         intUrl=client_url, 
         stopEvent=stop_event,
-        interval=client_polling_interval
+        interval=settings.CLIENT_POLLING_INTERVAL
     )
 
     # Graceful stop function

@@ -111,8 +111,6 @@ class ClientPolling:
         # Print the JSON output
         json_output = json.loads(result.stdout)
 
-        print(json_output)
-
         self.intClient.patch('/api/SystemInformation/',data=json_output, headers={'Content-Type': 'application/json'})
 
     def stop(self):

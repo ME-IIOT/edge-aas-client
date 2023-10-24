@@ -159,6 +159,9 @@ AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001
 SERVER_URL = os.environ.get('SERVER_URL', 'http://0.0.0.0:51000')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://0.0.0.0:18000')
 
+CLIENT_POLLING_INTERVAL = int(os.environ.get('CLIENT_POLLING_INTERVAL', 5))
+SERVER_POLLING_INTERVAL = int(os.environ.get('SERVER_POLLING_INTERVAL', 10))
+
 INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BASE_DIR / 'default_config/interfaces.json')
 
 VENDOR_NAME = os.environ.get('VENDOR_NAME', 'VendorName')
@@ -170,8 +173,8 @@ SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 TEXT_COLOR = os.environ.get('TEXT_COLOR', '#0000FF')
 BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
 
-MQTT_BROKER_HOST = os.environ.get('MQTT_BROKER_HOST', 'mqtt-broker')
-MQTT_BROKER_PORT = os.environ.get('MQTT_BROKER_PORT', 1883)
 
+# MQTT_BROKER_HOST = os.environ.get('MQTT_BROKER_HOST', 'mqtt-broker')
+# MQTT_BROKER_PORT = os.environ.get('MQTT_BROKER_PORT', 1883)
 
 

@@ -32,6 +32,12 @@ To set up the client image tailored for your system's architecture, update the `
 - Ensure that you substitute the placeholder with your variable (leave it as empty string if you dont want any text there)
     ```shell
     AAS_ID_Short=<your_device_AAS>
+
+    SERVER_URL=<url_of_aasx_server>
+    CLIENT_POLLING_INTERVAL=<seconds_between_each_poll_from_client>
+    SERVER_POLLING_INTERVAL=<seconds_between_each_poll_from_server> 
+
+
     VENDOR_NAME=<your_company_name>
     VENDOR_LINK=<link_to_your_company_homepage>
     PRIMARY_COLOR=<color_of_header>
@@ -59,6 +65,10 @@ TODO **If cloud server is used**, also update the env var for server URL
    - For SystemInformation, visit:
      [http://localhost:18000/api/SystemInformation/](http://localhost:18000/api/SystemInformation/)
 
+3. Mounted script
+
+There are mounted bash scripts to read device information. Change the bash script if it not working with your device.
+
 ### Using your own client GUI
 The AAS client exposes REST API to manage the simulated device states for your GUI with REST client or scrpting with curl command.
 
@@ -74,8 +84,8 @@ Here are JSON examples for different endpoints:
                     "IPv4Address": "192.168.0.1",
                     "IPv4SubnetMask": "255.255.255.0",
                     "IPv4StandardGateway": "192.168.0.0",
-                    "HostName": "eth0",
-                    "AddressModus": "Static",
+                    "Name": "eth0",
+                    "AddressMode": "Static",
                     "LinkSpeedReceiveTransmit": "1 Gbps",
                     "IPv4DNSServers": "8.8.8.8",
                     "PrimaryDNSSuffix": "example.com"
@@ -84,8 +94,8 @@ Here are JSON examples for different endpoints:
                     "IPv4Address": "192.168.1.100",
                     "IPv4SubnetMask": "255.255.255.0",
                     "IPv4StandardGateway": "192.168.1.0",
-                    "HostName": "eth1",
-                    "AddressModus": "Automatic/DHCP",
+                    "Name": "eth1",
+                    "AddressMode": "Automatic/DHCP",
                     "LinkSpeedReceiveTransmit": "10 Gbps",
                     "IPv4DNSServers": "8.8.8.8",
                     "PrimaryDNSSuffix": "example.com"
