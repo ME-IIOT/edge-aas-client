@@ -1,10 +1,9 @@
-from rest_framework import viewsets,status
+from rest_framework import viewsets, status
 from .models import NetworkConfiguration
 from .serializers import NetworkConfigurationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http import Http404, HttpResponseRedirect
-
 from django.conf import settings
 from EdgeAasMessageHandler.Reactor import Reactor
 from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
@@ -41,10 +40,7 @@ def handle_mqtt_network_configuration_put(message_topic: str, message_payload:st
 class NetworkConfigurationViewSet(viewsets.ModelViewSet):
     queryset = NetworkConfiguration.objects.all()
     serializer_class = NetworkConfigurationSerializer
-
     reactor = Reactor()
-    
-
     reactor.register_handler(EdgeEvent.NETWORK_CONFIGURATION_REQUEST, EdgeEventHandler())
 
     def create(self, request, *args, **kwargs):
@@ -73,17 +69,14 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         raise Http404("No NetworkConfiguration object available. Use POST to create.")
     
     def update(self, request, *args, **kwargs):
-
         instance = self.queryset.first()
         if not instance:
             return Response({"detail": "No NetworkConfiguration object available. Use POST to create."}, status=status.HTTP_404_NOT_FOUND)
 
         modified_request_data = request.data.copy()
         modified_request_data['LastUpdate'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
-        # serializer = self.get_serializer(instance, data=request.data, partial=True)
-
         
+        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -94,8 +87,8 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
             )
             return Response(serializer.data)
         else:
-            return Response(serializer.error, status=status.HTTP_406_NOT_ACCEPTABLE)
-        
+            return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
     def patch(self, request, *args, **kwargs):
         # Fetch the LastUpdate value from the request
         request_last_update = request.data.get('LastUpdate')
@@ -145,10 +138,8 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         
         modified_request_data = request.data.copy()
         modified_request_data['LastUpdate'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
-        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
         
-        # serializer = self.get_serializer(instance, data=request.data, partial=True)
-
+        serializer = self.get_serializer(instance, data=modified_request_data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
