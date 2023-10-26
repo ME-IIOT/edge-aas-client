@@ -1,6 +1,9 @@
 # Use Python 3.10.9
+# ARG ARCH=
+# FROM ${ARCH}python:3.10-slim
 ARG ARCH=
-FROM ${ARCH}python:3.10-slim
+FROM python:3.10-slim
+
 # FROM python:3.10
 
 # Set environment variables
@@ -30,4 +33,7 @@ EXPOSE 18000
 
 # Command to run the application
 # CMD ["gunicorn", "--bind", "0.0.0.0:18000", "aas_edge_client.wsgi:application"]
-CMD ["python3", "manage.py", "runserver", "--noreload", "0.0.0.0:18000"]
+
+# CMD ["python3", "manage.py", "runserver", "--noreload", "0.0.0.0:18000"]
+
+CMD ["bash", "entrypoint.sh"]
