@@ -156,7 +156,8 @@ import os
 
 AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001_AAS')
 # AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', '')
-SERVER_URL = os.environ.get('SERVER_URL', 'http://0.0.0.0:51000')
+# SERVER_URL = os.environ.get('SERVER_URL', 'http://192.168.99.59:51000')
+SERVER_URL = os.environ.get('SERVER_URL', 'https://ca-lni-aaxserver-dev-002.gentlerock-dced5219.northeurope.azurecontainerapps.io')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://0.0.0.0:18000')
 
 CLIENT_POLLING_INTERVAL = int(os.environ.get('CLIENT_POLLING_INTERVAL', 5))

@@ -1,10 +1,6 @@
-# Use Python 3.10.9
-# ARG ARCH=
-# FROM ${ARCH}python:3.10-slim
+# Use Python 3.10
 ARG ARCH=
 FROM python:3.10-slim
-
-# FROM python:3.10
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -13,12 +9,11 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 
-# Install system dependencies
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends gcc libpq-dev iproute2 procps
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
-
+# Install system dependencies, including ca-certificates for HTTPS communication
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc libpq-dev iproute2 procps ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /code/
@@ -31,9 +26,5 @@ COPY . /code/
 # Expose port
 EXPOSE 18000
 
-# Command to run the application
-# CMD ["gunicorn", "--bind", "0.0.0.0:18000", "aas_edge_client.wsgi:application"]
-
-# CMD ["python3", "manage.py", "runserver", "--noreload", "0.0.0.0:18000"]
-
+# Command to migrate & run the application
 CMD ["bash", "entrypoint.sh"]

@@ -6,6 +6,8 @@ from .RestHandler import RestHandler
 from submodels_template.parser_submodel import django_response_2_aas_SM_element, ordered_to_regular_dict
 import json
 from django.conf import settings
+import requests
+from requests.exceptions import RequestException
 
 
 # Event String definition
@@ -99,29 +101,119 @@ class EdgeEventHandler(EventHandler):
     #     except:
     #         print("Error in EdgeEventHandler.handle_put_hardware()")
 
-    def handle_put_network_configuration(self, request, request_data):
-        restHandler = RestHandler(baseUrl=settings.SERVER_URL)
-        try:
-            for key, value in request_data.items():
-                format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}/deep')["elem"]] #TODO: need some thing more dynamic
-                restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}')
-                request_data = ordered_to_regular_dict({key:value})
-                django_response_2_aas_SM_element(request_data, format)
-                restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
-        except Exception as e:
-            print(f"error {e}")
-            print("Error in EdgeEventHandler.handle_put_network_configuration()")
-            print(key, value)
-            print(request.data)
+    # def handle_put_network_configuration(self, request, request_data):
+    #     restHandler = RestHandler(baseUrl=settings.SERVER_URL)
+    #     try:
+    #         for key, value in request_data.items():
+    #             format = [restHandler.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}/deep')["elem"]] #TODO: need some thing more dynamic
+    #             restHandler.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}')
+    #             request_data = ordered_to_regular_dict({key:value})
+    #             django_response_2_aas_SM_element(request_data, format)
+    #             restHandler.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/', data=format[0])
+    #     except Exception as e:
+    #         print(f"error {e}")
+    #         print("Error in EdgeEventHandler.handle_put_network_configuration()")
+    #         print(key, value)
+    #         print(request.data)
 
-    def handle_put_system_information(self,request, request_data):
-        restHandlder = RestHandler(baseUrl=settings.SERVER_URL)
+    # def handle_put_system_information(self,request, request_data):
+    #     restHandlder = RestHandler(baseUrl=settings.SERVER_URL)
+    #     try:
+    #         for key, value in request_data.items():
+    #             format = [restHandlder.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}/deep')["elem"]]
+    #             restHandlder.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}')
+    #             request_data = ordered_to_regular_dict({key:value})
+    #             django_response_2_aas_SM_element(request_data, format)
+    #             restHandlder.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
+    #     except:
+    #         print("Error in EdgeEventHandler.handle_put_system_information()")
+    
+
+    def handle_put_network_configuration(self, request, request_data):
         try:
             for key, value in request_data.items():
-                format = [restHandlder.get(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}/deep')["elem"]]
-                restHandlder.delete(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}')
-                request_data = ordered_to_regular_dict({key:value})
+                # Construct the URL
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}/deep'
+
+                # Perform a GET request
+                response = requests.get(url)
+
+                print(f"GET: {response.status_code}")
+                if response.status_code != 200:
+                    # Check for HTTP errors
+                    response.raise_for_status()
+
+                format = [response.json()["elem"]]
+                
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}'
+                # Delete the resource
+                response = requests.delete(url)
+
+                print(f"DEL: {response.status_code}")
+
+                if response.status_code != 200:
+                    # Check for HTTP errors
+                    response.raise_for_status()
+
+                request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
-                restHandlder.put(url=f'/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/', data=format[0])
-        except:
+
+                # Perform a PUT request
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/'
+                
+
+                response = requests.put(url, json=format[0])
+                
+                print(f"PUT: {response.status_code}")
+                if response.status_code != 200:
+                    # Check for HTTP errors
+                    response.raise_for_status()
+
+        except RequestException as e:
+            print(f"Request error: {e}")
+            print("Error in EdgeEventHandler.handle_put_network_configuration()")
+
+    def handle_put_system_information(self, request, request_data):
+        try:
+            for key, value in request_data.items():
+                # Construct the URL
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}/deep'
+                
+                # Perform a GET request
+                response = requests.get(url)
+
+                # print(response.json())
+                print(f"GET: {response.status_code}")
+                if response.status_code != 200:
+                    # Check for HTTP errors
+                    response.raise_for_status()
+                format = [response.json()["elem"]]
+
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}'
+                # Delete the resource
+                response = requests.delete(url)
+                
+
+                print(f"DEL: {response.status_code}")
+                if response.status_code != 200:
+                    # Check for HTTP errors
+                    response.raise_for_status()
+
+                request_data = ordered_to_regular_dict({key: value})
+                django_response_2_aas_SM_element(request_data, format)
+
+
+                # Perform a PUT request
+                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/'
+                response = requests.put(url, json=format[0])
+
+                
+                print(f"PUT: {response.status_code}")                
+                if response.status_code != 200:
+
+                    # Check for HTTP errors
+                    response.raise_for_status()
+
+        except RequestException as e:
+            print(f"Request error: {e}")
             print("Error in EdgeEventHandler.handle_put_system_information()")
