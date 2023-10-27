@@ -138,25 +138,27 @@ class EdgeEventHandler(EventHandler):
                 # Perform a GET request
                 response = requests.get(url)
 
-                print(f"GET: {response.status_code}")
+                #print(f"GET: {response.status_code}")
                 if response.status_code != 200:
                     # Check for HTTP errors
                     response.raise_for_status()
 
                 format = [response.json()["elem"]]
                 
-                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}'
-                # Delete the resource
-                response = requests.delete(url)
-
-                print(f"DEL: {response.status_code}")
-
-                if response.status_code != 200:
-                    # Check for HTTP errors
-                    response.raise_for_status()
-
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
+
+                # url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}'
+                # # Delete the resource
+                # response = requests.delete(url)
+
+                # #print(f"DEL: {response.status_code}")
+
+                # if response.status_code != 200:
+                #     # Check for HTTP errors
+                #     response.raise_for_status()
+
+                
 
                 # Perform a PUT request
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/'
@@ -164,15 +166,15 @@ class EdgeEventHandler(EventHandler):
 
                 response = requests.put(url, json=format[0])
                 
-                print(f"PUT: {response.status_code}")
+                #print(f"PUT: {response.status_code}")
                 if response.status_code != 200:
                     # Check for HTTP errors
                     response.raise_for_status()
 
-        except RequestException as e:
-            print(f"Request error: {e}")
-            print("Error in EdgeEventHandler.handle_put_network_configuration()")
-
+        except Exception as e:
+            print(f"Error {e}. Check AASX file - NetworkConfiguration submodel may missing element.")
+            raise e
+        
     def handle_put_system_information(self, request, request_data):
         try:
             for key, value in request_data.items():
@@ -183,24 +185,25 @@ class EdgeEventHandler(EventHandler):
                 response = requests.get(url)
 
                 # print(response.json())
-                print(f"GET: {response.status_code}")
+                #print(f"GET: {response.status_code}")
                 if response.status_code != 200:
                     # Check for HTTP errors
                     response.raise_for_status()
                 format = [response.json()["elem"]]
 
-                url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}'
-                # Delete the resource
-                response = requests.delete(url)
-                
-
-                print(f"DEL: {response.status_code}")
-                if response.status_code != 200:
-                    # Check for HTTP errors
-                    response.raise_for_status()
-
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
+
+                # url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}'
+                # # Delete the resource
+                # response = requests.delete(url)
+                
+
+                # #print(f"DEL: {response.status_code}")
+                # if response.status_code != 200:
+                #     # Check for HTTP errors
+                #     response.raise_for_status()
+
 
 
                 # Perform a PUT request
@@ -208,12 +211,12 @@ class EdgeEventHandler(EventHandler):
                 response = requests.put(url, json=format[0])
 
                 
-                print(f"PUT: {response.status_code}")                
+                #print(f"PUT: {response.status_code}")                
                 if response.status_code != 200:
 
                     # Check for HTTP errors
                     response.raise_for_status()
 
-        except RequestException as e:
-            print(f"Request error: {e}")
-            print("Error in EdgeEventHandler.handle_put_system_information()")
+        except Exception as e:
+            print(f"Error {e}. Check AASX file - SystemInformation submodel may missing element.")
+            raise e

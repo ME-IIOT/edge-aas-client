@@ -50,17 +50,24 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if SystemInformation.objects.exists():
             existing_configuration = self.queryset.first()
             serializer = SystemInformationSerializer(existing_configuration)
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response({"detail": "SystemInformation already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
-        
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response({"detail": "SystemInformation already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
+            except Exception as e:
+                return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
         serializer = SystemInformationSerializer(data=request.data)
         if serializer.is_valid():
-            self.reactor.handle_event( request=request,event_name = EdgeEvent.SYSTEM_INFORMATION_REQUEST, serializer_data=serializer.data)
-            return super().create(request, *args, **kwargs)
+            serializer.save()
+            try:
+                self.reactor.handle_event( request=request,event_name = EdgeEvent.SYSTEM_INFORMATION_REQUEST, serializer_data=serializer.data)
+                return super().create(request, *args, **kwargs)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -84,12 +91,15 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response(serializer.data)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -121,14 +131,17 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            payload_json = json.dumps(serializer.data)
-            # SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                payload_json = json.dumps(serializer.data)
+                # SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -146,11 +159,14 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response(serializer.data)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

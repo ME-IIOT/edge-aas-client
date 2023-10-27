@@ -51,17 +51,24 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         if NetworkConfiguration.objects.exists():
             existing_configuration = self.queryset.first()
             serializer = NetworkConfigurationSerializer(existing_configuration)
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response({"detail": "NetworkConfiguration already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
-        
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response({"detail": "NetworkConfiguration already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         serializer = NetworkConfigurationSerializer(data=request.data)
         if serializer.is_valid():
-            self.reactor.handle_event( request=request,event_name = EdgeEvent.NETWORK_CONFIGURATION_REQUEST, serializer_data=serializer.data)
-            return super().create(request, *args, **kwargs)
+            serializer.save()
+            try:
+                self.reactor.handle_event( request=request,event_name = EdgeEvent.NETWORK_CONFIGURATION_REQUEST, serializer_data=serializer.data)
+                return super().create(request, *args, **kwargs)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -87,12 +94,15 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response(serializer.data)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.error, status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -126,14 +136,17 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            payload_json = json.dumps(serializer.data)
-            # NCmqttHandler.publish(topic='ServerNetworkConfigurationChange', payload=payload_json)
-            return Response(serializer.data)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                payload_json = json.dumps(serializer.data)
+                # NCmqttHandler.publish(topic='ServerNetworkConfigurationChange', payload=payload_json)
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -152,11 +165,14 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            self.reactor.handle_event(
-                request=request,
-                event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
-                serializer_data=serializer.data
-            )
-            return Response(serializer.data)
+            try:
+                self.reactor.handle_event(
+                    request=request,
+                    event_name=EdgeEvent.NETWORK_CONFIGURATION_REQUEST,
+                    serializer_data=serializer.data
+                )
+                return Response(serializer.data)
+            except Exception as e:
+                return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
