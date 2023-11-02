@@ -166,13 +166,13 @@ SERVER_POLLING_INTERVAL = int(os.environ.get('SERVER_POLLING_INTERVAL', 10))
 
 INTERFACES_DEFAULT_FILE_PATH = os.environ.get('INTERFACES_DEFAULT_FILE_PATH', BASE_DIR / 'default_config/interfaces.json')
 
-VENDOR_NAME = os.environ.get('VENDOR_NAME', 'VendorName')
-VENDOR_LINK = os.environ.get('VENDOR_LINK', '')
+VENDOR_NAME = os.environ.get('VENDOR_NAME', 'Murrelektronik')
+VENDOR_LINK = os.environ.get('VENDOR_LINK', 'https://www.murrelektronik.com')
 
 PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
 SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 
-TEXT_COLOR = os.environ.get('TEXT_COLOR', '#0000FF')
+TEXT_COLOR = os.environ.get('TEXT_COLOR', '#FFFFFF')
 BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
 
 
