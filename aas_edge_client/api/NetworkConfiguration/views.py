@@ -14,6 +14,9 @@ from EdgeAasMessageHandler.MqttHandler import MqttHandler
 import requests
 import json
 import atexit
+import logging
+
+logger = logging.getLogger('django')
 
 def handle_mqtt_network_configuration_put(message_topic: str, message_payload:str) -> None:
     try:
@@ -130,7 +133,9 @@ class NetworkConfigurationViewSet(viewsets.ModelViewSet):
         
         # Compare the LastUpdate values
         if timezone.make_aware(request_datetime) <= instance_datetime:
+            logger.info(f"Server NetworkConfiguration is not newer. Server: {request_datetime} Client: {instance_datetime}")
             return Response({'detail': 'Request data is not newer.'}, status=status.HTTP_304_NOT_MODIFIED)
+
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
 
