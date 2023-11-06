@@ -17,7 +17,7 @@ services:
 
   web:
     # container_name: django-aas-client-combi
-    image: manhlinh210/aas_edge_client-web:amd64-1.0.1
+    image: manhlinh210/aas_edge_client-web:amd64-1.0.2
     ports:
       - 18000:18000
     # depends_on:

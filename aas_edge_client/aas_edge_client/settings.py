@@ -48,6 +48,52 @@ INSTALLED_APPS = [
     # 'api.template',
     # 'api.aasx',
 ]
+import os
+
+
+LOGGING_DIR = os.path.join(BASE_DIR, 'logging')
+if not os.path.exists(LOGGING_DIR):
+    os.makedirs(LOGGING_DIR)
+
+accessLog = os.path.join(LOGGING_DIR, 'django_access.log')
+errorLog = os.path.join(LOGGING_DIR, 'django_error.log')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file_access': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': accessLog,
+            'formatter': 'verbose',
+        },
+        'file_error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': errorLog,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': { #<- logger name
+            'handlers': ['file_access', 'file_error'],
+            'level': 'INFO', #capture all level above INFO
+            'propagate': True,
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,7 +111,7 @@ ROOT_URLCONF = 'aas_edge_client.urls'
 
 STATIC_URL = '/static/'
 
-import os
+
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -157,8 +203,8 @@ import os
 
 AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', 'Murrelektronik_V000_CTXQ0_0100001_AAS')
 # AAS_ID_SHORT = os.environ.get('AAS_ID_SHORT', '')
-# SERVER_URL = os.environ.get('SERVER_URL', 'http://192.168.99.59:51000')
-SERVER_URL = os.environ.get('SERVER_URL', 'https://ca-lni-aaxserver-dev-002.gentlerock-dced5219.northeurope.azurecontainerapps.io')
+SERVER_URL = os.environ.get('SERVER_URL', 'http://0.0.0.0:51000')
+#SERVER_URL = os.environ.get('SERVER_URL', 'https://ca-lni-aaxserver-dev-002.gentlerock-dced5219.northeurope.azurecontainerapps.io')
 CLIENT_URL = os.environ.get('CLIENT_URL', 'http://0.0.0.0:18000')
 
 CLIENT_POLLING_INTERVAL = int(os.environ.get('CLIENT_POLLING_INTERVAL', 5))
@@ -172,7 +218,7 @@ VENDOR_LINK = os.environ.get('VENDOR_LINK', '')
 PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
 SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 
-TEXT_COLOR = os.environ.get('TEXT_COLOR', '#0000FF')
+TEXT_COLOR = os.environ.get('TEXT_COLOR', '#FFFFFF')
 BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
 
 

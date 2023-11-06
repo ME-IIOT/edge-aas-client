@@ -21,11 +21,11 @@ The client **simulates** gateway edge device configuration with internal Databas
 
 To set up the client image tailored for your system's architecture, update the `docker-compose.yaml` file. You have three architectural options to select from:
 
-- **amd64**: `manhlinh210/aas_edge_client-web:amd64-1.0.0`
+- **amd64**: `manhlinh210/aas_edge_client-web:amd64-1.0.2`
   
-- **arm32v7**: `manhlinh210/aas_edge_client-web:arm32v7-1.0.0`
+- **arm32v7**: `manhlinh210/aas_edge_client-web:arm32v7-1.0.2`
   
-- **arm64v8**: `manhlinh210/aas_edge_client-web:arm64v8-1.0.0`
+- **arm64v8**: `manhlinh210/aas_edge_client-web:arm64v8-1.0.2`
 
 ### Configuring the ENV File
 
@@ -67,7 +67,7 @@ TODO **If cloud server is used**, also update the env var for server URL
 
 3. Mounted script
 
-There are mounted bash scripts to read device information. Change the bash script if it not working with your device.
+There are mounted bash scripts to read device information (sysInfo.sh). Change the bash script if it is not working with your device.
 
 ### Using your own client GUI
 The AAS client exposes REST API to manage the simulated device states for your GUI with REST client or scrpting with curl command.
@@ -128,3 +128,18 @@ Here are JSON examples for different endpoints:
             "LastUpdate": "2023-10-19T15:44:26Z" 
         }
     ```
+
+### Logging
+
+There are 2 logging files: django_access.log and django_error.log
+
+Access these files through docker exec: 
+
+```bash
+docker exec -it <image_id> /bin/bash
+
+tail -f logging/django_access.log
+
+tail -f logging/django_error.log
+
+```
