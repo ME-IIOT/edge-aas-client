@@ -1,14 +1,13 @@
 from .EventHandler import EventHandler
-from django.http import HttpRequest
-from rest_framework.request import Request
+
 from enum import Enum
-from .RestHandler import RestHandler
 from submodels_template.parser_submodel import django_response_2_aas_SM_element, ordered_to_regular_dict
-import json
+
 from django.conf import settings
 import requests
-from requests.exceptions import RequestException
+import logging
 
+logger = logging.getLogger('django')
 
 # Event String definition
 class EdgeEvent(Enum):
@@ -140,25 +139,13 @@ class EdgeEventHandler(EventHandler):
 
                 #print(f"GET: {response.status_code}")
                 if response.status_code != 200:
-                    # Check for HTTP errors
+                    logger.error(f"GET failed: {response.status_code} for key: {key} with URL: {url}")
                     response.raise_for_status()
 
                 format = [response.json()["elem"]]
                 
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
-
-                # url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}'
-                # # Delete the resource
-                # response = requests.delete(url)
-
-                # #print(f"DEL: {response.status_code}")
-
-                # if response.status_code != 200:
-                #     # Check for HTTP errors
-                #     response.raise_for_status()
-
-                
 
                 # Perform a PUT request
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/'
@@ -168,12 +155,15 @@ class EdgeEventHandler(EventHandler):
                 
                 #print(f"PUT: {response.status_code}")
                 if response.status_code != 200:
-                    # Check for HTTP errors
+                    logger.error(f"PUT failed: {response.status_code} for key: {key} with URL: {url}")
                     response.raise_for_status()
 
+        except requests.HTTPError as http_err:
+            logger.error(f"HTTP error occurred: {http_err}")
+            raise
         except Exception as e:
-            print(f"Error {e}. Check AASX file - NetworkConfiguration submodel may missing element.")
-            raise e
+            logger.error(f"Error {e}. Check AASX file - NetworkConfiguration submodel may missing element.")
+            raise
         
     def handle_put_system_information(self, request, request_data):
         try:
@@ -187,36 +177,26 @@ class EdgeEventHandler(EventHandler):
                 # print(response.json())
                 #print(f"GET: {response.status_code}")
                 if response.status_code != 200:
-                    # Check for HTTP errors
+                    logger.error(f"GET failed: {response.status_code} for key: {key} URL: {url}")
                     response.raise_for_status()
                 format = [response.json()["elem"]]
 
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
 
-                # url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}'
-                # # Delete the resource
-                # response = requests.delete(url)
-                
-
-                # #print(f"DEL: {response.status_code}")
-                # if response.status_code != 200:
-                #     # Check for HTTP errors
-                #     response.raise_for_status()
-
-
-
                 # Perform a PUT request
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/'
                 response = requests.put(url, json=format[0])
 
                 
-                #print(f"PUT: {response.status_code}")                
+                               
                 if response.status_code != 200:
-
-                    # Check for HTTP errors
+                    logger.error(f"PUT failed: {response.status_code} for key: {key} URL: {url}")
                     response.raise_for_status()
 
+        except requests.HTTPError as http_err:
+            logger.error(f"HTTP error occurred: {http_err}")
+            raise
         except Exception as e:
-            print(f"Error {e}. Check AASX file - SystemInformation submodel may missing element.")
-            raise e
+            logger.error(f"Error {e}. Check AASX file - SystemInformation submodel may missing element.")
+            raise

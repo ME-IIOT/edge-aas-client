@@ -45,6 +45,12 @@ class RestHandler(IRestHandler):
 
     def _parse_response(self, response):
         try:
-            return response.json()
+            content = response.json()
         except ValueError:
-            return response.text
+            content = response.text
+
+        # Return a dictionary with both the status code and content
+        return {
+            'status_code': response.status_code,
+            'content': content
+        }
