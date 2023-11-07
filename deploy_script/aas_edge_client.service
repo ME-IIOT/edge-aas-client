@@ -1,0 +1,16 @@
+[Unit]
+Description=AAS Edge Client daemon
+Requires=aas_edge_client.socket
+Before=nginx.service
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/var/www/aas_edge_client
+Environment="PYTHONPATH=/var/www/aas_edge_client/venv/lib/python3.10/site-packages"
+ExecStartPre=python3 manage.py migrate
+ExecStart=python3 manage.py runserver --noreload 0.0.0.0:18000
+
+[Install]
+WantedBy=multi-user.target

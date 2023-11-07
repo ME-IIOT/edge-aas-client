@@ -3,7 +3,8 @@
 # Function to display system information
 display_system_info() {
     # Processor Information
-    CPU_TYPE="ARMv8"  # Assuming a static value
+    # CPU_TYPE="ARMv8"  # Assuming a static value
+    CPU_TYPE=$(lscpu | grep "Architecture" | awk '{print $2}')
     CPU_CORES=$(lscpu | grep "^CPU(s):" | awk '{print $2}')
     CPU_CLOCK=$(lscpu | grep "Model name" | awk -F '@' '{print $2}' | xargs)
     CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | awk '{print 100 - $1"%"}')
@@ -17,7 +18,7 @@ display_system_info() {
     DISK_FREE=$(df -H --output=avail / | tail -n 1 | awk '{print $1}')
 
     # Board Temperature - Assuming a static value
-    BOARD_TEMPERATURE="42°C"  
+    BOARD_TEMPERATURE=$(vxsensors_lib_test humTemp | grep "Temperatur" | awk '{print $2}') 
 
     # Output as JSON
     echo -e "{

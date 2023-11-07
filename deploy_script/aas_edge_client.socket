@@ -1,0 +1,8 @@
+[Unit]
+Description=AAS Edge Client socket
+
+[Socket]
+ListenStream=/run/aas_edge_client.sock
+
+[Install]
+WantedBy=sockets.target
