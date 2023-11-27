@@ -7,6 +7,9 @@ from django.conf import settings
 import requests
 import logging
 
+import json
+import time
+
 logger = logging.getLogger('django')
 
 # Event String definition
@@ -135,7 +138,7 @@ class EdgeEventHandler(EventHandler):
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/{key}/deep'
 
                 # Perform a GET request
-                response = requests.get(url)
+                response = requests.get(url, timeout=1)
 
                 #print(f"GET: {response.status_code}")
                 if response.status_code != 200:
@@ -147,16 +150,22 @@ class EdgeEventHandler(EventHandler):
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
 
+                #print(format[0])
+                #print(f"----------------------------send SubmoduleElement: {key} json to AAS server----------------------------------------")
+                #print(json.dumps(format[0], indent=4, sort_keys=True))
                 # Perform a PUT request
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/NetworkConfiguration/elements/'
                 
 
-                response = requests.put(url, json=format[0])
+                response = requests.put(url, json=format[0], timeout=1)
                 
                 #print(f"PUT: {response.status_code}")
                 if response.status_code != 200:
                     logger.error(f"PUT failed: {response.status_code} for key: {key} with URL: {url}")
                     response.raise_for_status()
+                
+                # time.sleep(1)
+                
 
         except requests.HTTPError as http_err:
             logger.error(f"HTTP error occurred: {http_err}")
@@ -172,7 +181,7 @@ class EdgeEventHandler(EventHandler):
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/{key}/deep'
                 
                 # Perform a GET request
-                response = requests.get(url)
+                response = requests.get(url, timeout=1)
 
                 # print(response.json())
                 #print(f"GET: {response.status_code}")
@@ -184,9 +193,11 @@ class EdgeEventHandler(EventHandler):
                 request_data = ordered_to_regular_dict({key: value})
                 django_response_2_aas_SM_element(request_data, format)
 
+                # print(format[0])
+                #print(json.dumps(format[0], indent=4, sort_keys=True))
                 # Perform a PUT request
                 url = f'{settings.SERVER_URL}/aas/{settings.AAS_ID_SHORT}/submodels/SystemInformation/elements/'
-                response = requests.put(url, json=format[0])
+                response = requests.put(url, json=format[0], timeout=1)
 
                 
                                

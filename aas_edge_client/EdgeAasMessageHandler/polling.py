@@ -8,6 +8,7 @@ from threading import Event
 import subprocess
 import logging
 from datetime import datetime
+import json
 
 # Get an instance of a logger
 logger = logging.getLogger('django')
@@ -75,6 +76,8 @@ class AASX_Server_Polling:
                 return
 
             polledNetworkConfiguration = response["content"].get("submodelElements")
+            #print("----------------------------retrieve NetworkConfigurtion json from AAS server----------------------------------------")
+            #print(json.dumps(polledNetworkConfiguration, indent=4, sort_keys=True))
             data_NetworkConfiguration = self.translate_and_format(polledNetworkConfiguration, "NetworkConfiguration")
 
             response = self.intClient.patch('/api/NetworkConfiguration/', data=data_NetworkConfiguration, headers={'Content-Type': 'application/json'})
@@ -82,6 +85,7 @@ class AASX_Server_Polling:
             # if response["status_code"]not in range(200, 300):
             #     logger.error(f'Failed to update NetworkConfiguration from Server via API. Status Code: {response["status_code"]} Response: {response["content"]}')
         except Exception as e:
+            print(f"An error occurred while updating NetworkConfiguration: {e}")
             logger.exception("An error occurred while updating NetworkConfiguration.")
             # raise exception as needed
 
@@ -103,12 +107,15 @@ class AASX_Server_Polling:
             #     logger.error(f'Failed to update SystemInformation from Server via API. Status Code: {response["status_code"]} Response: {response["content"]}')
         except Exception as e:
             logger.exception("An error occurred while updating SystemInformation.")
+            print(f"An error occurred while updating SystemInformation: {e}")
             # Handle the exception as needed
 
     def translate_and_format(self, polled_data, data_type):
         translated_data = json.dumps(aas_SM_element_2_django_response(polled_data))
         data = json.loads(translated_data)
         try:
+            # print("----------------------------retrieve LastUpdate from AAS server----------------------------------------")
+            # print(data["LastUpdate"])
             datetime_obj = datetime.strptime(data["LastUpdate"], '%m/%d/%Y %H:%M:%S')
             data["LastUpdate"] = datetime_obj.strftime('%Y-%m-%dT%H:%M:%SZ')
         except Exception as e:
@@ -172,6 +179,7 @@ class ClientPolling:
             if response["status_code"]not in range(200, 300):
                 logger.error(f'Failed to update SystemInformation via API. Status Code: {response["status_code"]} Response: {response["content"]}')
         except Exception as e:
+            print(f"An error occurred while collecting internal SystemInformation: {e}")
             logger.exception('An unexpected error occurred while retrieving SystemInformation in Client')
 
     def stop(self):

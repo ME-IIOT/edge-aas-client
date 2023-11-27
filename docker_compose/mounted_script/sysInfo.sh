@@ -13,7 +13,7 @@ display_system_info() {
 
     # Memory Information
     RAM_INSTALLED=$(free -h | awk '/Mem:/ {print $2}')
-    RAM_FREE=$(free -h | awk '/Mem:/ {print $4}')
+    RAM_FREE=$(free -h | awk '/Mem:/ {if ($4 ~ /Mi$/) {sub(/Mi$/, "", $4); $4 /= 1000} print $4 "Gi"}')
     DISK_INSTALLED=$(df -H --output=size / | tail -n 1 | awk '{print $1}')
     DISK_FREE=$(df -H --output=avail / | tail -n 1 | awk '{print $1}')
 
