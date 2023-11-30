@@ -38,16 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'aas_edge_client',
-    'api.interfaces',
-    'api.hardware',
-    'api.sensor',
     'api.NetworkConfiguration',
     'api.SystemInformation',
-    # 'api.nameplate',
-    # 'api.template',
-    # 'api.aasx',
+    'periodic_task',
 ]
+
 import os
 
 
@@ -104,7 +101,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'aas_edge_client.middleware.StartupMiddleware', # <--- for initialization
 ]
 
 ROOT_URLCONF = 'aas_edge_client.urls'
@@ -197,6 +193,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CLIENT_URL = 'http://localhost:8000'
 
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Default Redis port is 6379
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # If you want to store task results
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+from celery.schedules import crontab
+from datetime import timedelta
+
+CELERY_BEAT_SCHEDULE = {
+    # 'aasx_server_polling': {
+    #     'task': 'periodic_task.tasks.aasx_server_polling',
+    #     'schedule': timedelta(seconds=10),  # Schedule the task to run every minute
+    # },
+    'aasx_client_polling': {
+        'task': 'periodic_task.tasks.aasx_client_polling',
+        'schedule': timedelta(seconds=5),  # Schedule the task to run every minute
+    },
+}
 
 
 import os
@@ -219,10 +235,5 @@ PRIMARY_COLOR = os.environ.get('PRIMARY_COLOR', '#55B410')
 SECONDARY_COLOR = os.environ.get('SECONDARY_COLOR', '#164C0C')
 
 TEXT_COLOR = os.environ.get('TEXT_COLOR', '#FFFFFF')
-BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')
-
-
-# MQTT_BROKER_HOST = os.environ.get('MQTT_BROKER_HOST', 'mqtt-broker')
-# MQTT_BROKER_PORT = os.environ.get('MQTT_BROKER_PORT', 1883)
-
+BUTTON_COLOR = os.environ.get('BUTTON_COLOR', '#55B410')    
 

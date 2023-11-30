@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+from typing import List, Dict
 
 
 def transform_response(inputResponse, templateFilePath):
@@ -41,7 +42,7 @@ def transform_response(inputResponse, templateFilePath):
 
 "value of elem key is in submodel/<submodel_id>/elements/<elem_id>/deep is a dictionary, but put it in a list (only 1 element) to match the recursive structure"
 # templateJSON is an in/out parameter (reference)
-def django_response_2_aas_SM_element(djangoJSON, templateJSON):
+def django_response_2_aas_SM_element(djangoJSON: Dict, templateJSON:List):
     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
     for element in templateJSON:
         if isinstance(element["value"], list):

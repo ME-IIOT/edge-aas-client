@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class InterfacesConfig(AppConfig):
+class PeriodicTaskConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'api.interfaces'
+    name = 'periodic_task'

@@ -11,7 +11,7 @@ WORKDIR /code
 
 # Install system dependencies, including ca-certificates for HTTPS communication
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev iproute2 procps ca-certificates && \
+    apt-get install -y --no-install-recommends gcc libpq-dev iproute2 procps ca-certificates redis-server && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

@@ -11,3 +11,6 @@ python3 manage.py collectstatic --noinput
 
 # Start gunicorn
 exec gunicorn aas_edge_client.wsgi:application --bind 0.0.0.0:18000 --log-file -
+
+# celery -A aas_edge_client.celery beat --loglevel=info
+# celery -A aas_edge_client worker --loglevel=info

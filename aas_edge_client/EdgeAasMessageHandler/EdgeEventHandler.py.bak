@@ -1,5 +1,3 @@
-from .EventHandler import EventHandler
-
 from enum import Enum
 from submodels_template.parser_submodel import django_response_2_aas_SM_element, ordered_to_regular_dict
 

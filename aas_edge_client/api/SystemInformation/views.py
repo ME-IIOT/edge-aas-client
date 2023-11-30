@@ -6,59 +6,34 @@ from rest_framework.decorators import action
 from django.http import Http404, HttpResponseRedirect
 
 from django.conf import settings
-from EdgeAasMessageHandler.Reactor import Reactor
-from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
+from EdgeAasMessageHandler.Reactor import AsyncReactor
+from EdgeAasMessageHandler.EdgeSubmodelHandler import ( UpdateServerSubmodelSystemInformationHandler,
+                                                        EdgeUpdateSubmodelEvent)
+from EdgeAasMessageHandler.EdgeHandler import Job
+# from EdgeAasMessageHandler.EdgeEventHandler import EdgeEventHandler, EdgeEvent
 from datetime import datetime
 from django.utils import timezone
-from EdgeAasMessageHandler.MqttHandler import MqttHandler
-import requests
 import json
-import atexit
 import logging
+import asyncio
+
 
 logger = logging.getLogger('django')
-
-def handle_mqtt_system_information_put(message_topic:str, message_payload: str) -> None:
-    try:
-        payload_json = json.loads(message_payload)
-    except json.JSONDecodeError:
-        print(f"Failed to decode JSON from message on {message_topic}")
-        return
-    
-    url = f'{settings.CLIENT_URL}/api/SystemInformation/'
-    headers = {'Content-Type': 'application/json'}
-    response = requests.put(url, json=payload_json, headers=headers)
-
-    if response.status_code == 200:
-        # print(f'Successfully updated system information')
-        pass
-    else:
-        print(f'Failed to update system information')
-
-# SImqttHandler = MqttHandler(handlerName="System Information MQTT")
-# SImqttHandler.connect(host=settings.MQTT_BROKER_HOST, port=settings.MQTT_BROKER_PORT)
-# SImqttHandler.loop_start()
-# SImqttHandler.subscribe(topic='ClientSystemInformationChange')
-# SImqttHandler.set_message_callback(handle_mqtt_system_information_put)
-# atexit.register(SImqttHandler.shutdown)
 class SystemInformationViewSet(viewsets.ModelViewSet):
     queryset = SystemInformation.objects.all()
     serializer_class = SystemInformationSerializer
 
-    reactor = Reactor()
+    reactor = AsyncReactor()
 
-    reactor.register_handler(EdgeEvent.SYSTEM_INFORMATION_REQUEST, EdgeEventHandler())
+    # reactor.register_handler(EdgeEvent.SYSTEM_INFORMATION_REQUEST, EdgeEventHandler())
 
     def create(self, request, *args, **kwargs): 
         if SystemInformation.objects.exists():
             existing_configuration = self.queryset.first()
             serializer = SystemInformationSerializer(existing_configuration)
             try:
-                self.reactor.handle_event(
-                    request=request,
-                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                    serializer_data=serializer.data
-                )
+                asyncio.run(self.reactor.add_job(job=Job(type_=EdgeUpdateSubmodelEvent.SYSTEM_INFORMATION.value, 
+                                             request_body=serializer.data)))
                 return Response({"detail": "SystemInformation already exists. Use PUT to update."}, status=status.HTTP_409_CONFLICT)
             except Exception as e:
                 return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -67,7 +42,8 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             try:
-                self.reactor.handle_event( request=request,event_name = EdgeEvent.SYSTEM_INFORMATION_REQUEST, serializer_data=serializer.data)
+                asyncio.run(self.reactor.add_job(job=Job(type_=EdgeUpdateSubmodelEvent.SYSTEM_INFORMATION.value, 
+                                             request_body=serializer.data)))
                 return super().create(request, *args, **kwargs)
             except Exception as e:
                 return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -95,11 +71,8 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             try:
-                self.reactor.handle_event(
-                    request=request,
-                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                    serializer_data=serializer.data
-                )
+                asyncio.run(self.reactor.add_job(job=Job(type_=EdgeUpdateSubmodelEvent.SYSTEM_INFORMATION.value, 
+                                             request_body=serializer.data)))
                 return Response(serializer.data)
             except Exception as e:
                 return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -136,11 +109,8 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             try:
-                self.reactor.handle_event(
-                    request=request,
-                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                    serializer_data=serializer.data
-                )
+                asyncio.run(self.reactor.add_job(job=Job(type_=EdgeUpdateSubmodelEvent.SYSTEM_INFORMATION.value, 
+                                             request_body=serializer.data)))
                 payload_json = json.dumps(serializer.data)
                 # SImqttHandler.publish(topic='ServerSystemInformationChange', payload=payload_json)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -164,11 +134,8 @@ class SystemInformationViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             try:
-                self.reactor.handle_event(
-                    request=request,
-                    event_name=EdgeEvent.SYSTEM_INFORMATION_REQUEST,
-                    serializer_data=serializer.data
-                )
+                asyncio.run(self.reactor.add_job(job=Job(type_=EdgeUpdateSubmodelEvent.SYSTEM_INFORMATION.value, 
+                                             request_body=serializer.data)))
                 return Response(serializer.data)
             except Exception as e:
                 return Response({"Error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
