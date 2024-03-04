@@ -1,28 +1,55 @@
-import requests
-from parser_submodel import *
+from pymongo import MongoClient
+import typing
+import os
 
-# Define the URL you want to send the GET request to
-url1 = 'http://localhost:51000/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels/Configuration/deep'
-url2 = 'http://localhost:51000/aas/Murrelektronik_V000_CTXQ0_0100001_AAS/submodels'
+# MongoDB connection URI and database information
+MONGO_URI = os.environ.get('MONGO_URI')
+DATABASE_NAME = "aas_edge_database"
+SHELLS_COLLECTION_NAME = "shells"
+SUBMODELS_COLLECTION_NAME = "submodels"
 
-# Send a GET request
-response = requests.get(url2)
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client[DATABASE_NAME]
+shells_collection = db[SHELLS_COLLECTION_NAME]
+submodels_collection = db[SUBMODELS_COLLECTION_NAME]
 
-# Check the response status code
-if response.status_code == 200:
-    # If the status code is 200, it means the request was successful
-    # print("GET request to {} was successful.".format(url))
-    print("Response Content:")
-    response = submodels_transform_data(response.json(), baseURL= "")
-    print(response)
-    
-    # submodelElements = response.json()["submodelElements"]
-    # # submodelElements = aas_SM_element_2_django_response(submodelElements)
-    # # submodelElements = django_response_2_name_value(submodelElements)
-    # submodelElements = aas_SM_element_2_name_value(submodelElements)
-    # print(json.dumps(submodelElements))
+# # Delete all documents in the 'shells' collection
+# shells_delete_result = shells_collection.delete_many({})
+# print(f"Deleted {shells_delete_result.deleted_count} documents from the 'shells' collection.")
 
-    # print(type(response))
-else:
-    # If the status code is not 200, there was an error
-    print("GET request to {} failed with status code {}".format(url2, response.status_code))
+# # Delete all documents in the 'submodels' collection
+# submodels_delete_result = submodels_collection.delete_many({})
+# print(f"Deleted {submodels_delete_result.deleted_count} documents from the 'submodels' collection.")
+
+
+# # Find all documents in the shells collection
+# all_shells_documents = shells_collection.find()
+
+# # Iterate through each document and print
+# for document in all_shells_documents:
+#     print(document)
+
+# Count documents in the collections
+shells_count = shells_collection.count_documents({})
+submodels_count = submodels_collection.count_documents({})
+
+print(f"Number of documents in 'shells' collection: {shells_count}")
+print(f"Number of documents in 'submodels' collection: {submodels_count}")
+
+aasIdShort = os.environ.get('AAS_IDSHORT')
+# dictionary = submodels_collection.find_one(
+#     {"_id": f"{aasIdShort}:submodels_dictionary"},
+#     {"_id": 0}
+# )
+# print(dictionary)
+
+def read_content_of_table(collectionName, tableName):
+    table_content = collectionName.find_one(
+        {"_id": tableName},
+        {"_id": 0}
+    )
+    return table_content
+
+aas_table_name =  f"{aasIdShort}:submodels_dictionary"
+print(read_content_of_table(collectionName=submodels_collection, tableName=aas_table_name))
