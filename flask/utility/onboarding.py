@@ -73,8 +73,6 @@ def first_fetch_single_submodel(   submodel_id: str, submodels_collection: Colle
     else:
         print(f"Failed to fetch URL {submodel_url}. Status code:", response.status_code)
 
-
-
 def onboarding_submodels(aasxServerUrl: str, aasIdShort: str, submodels_id: typing.List[str], submodels_collection: Collection):
     submodels_dictionary = {}
     
@@ -89,9 +87,7 @@ def onboarding_submodels(aasxServerUrl: str, aasIdShort: str, submodels_id: typi
         {"$set": submodels_dictionary},  
         upsert=True
     )
-   
-
-
+    
 def edge_device_onboarding(aasxServerUrl: str, aasIdentifier: str, aasIdShort: str, shells_collection: Collection, submodels_collection: Collection):
     url = aasxServerUrl + "shells/" + encode_base64url(aasIdentifier)# + "/submodels"
     # Send GET request

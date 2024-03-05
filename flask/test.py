@@ -31,25 +31,32 @@ submodels_collection = db[SUBMODELS_COLLECTION_NAME]
 #     print(document)
 
 # Count documents in the collections
-shells_count = shells_collection.count_documents({})
-submodels_count = submodels_collection.count_documents({})
+# shells_count = shells_collection.count_documents({})
+# submodels_count = submodels_collection.count_documents({})
 
-print(f"Number of documents in 'shells' collection: {shells_count}")
-print(f"Number of documents in 'submodels' collection: {submodels_count}")
+# print(f"Number of documents in 'shells' collection: {shells_count}")
+# print(f"Number of documents in 'submodels' collection: {submodels_count}")
 
-aasIdShort = os.environ.get('AAS_IDSHORT')
-# dictionary = submodels_collection.find_one(
-#     {"_id": f"{aasIdShort}:submodels_dictionary"},
-#     {"_id": 0}
-# )
-# print(dictionary)
+# aasIdShort = os.environ.get('AAS_IDSHORT')
+# # dictionary = submodels_collection.find_one(
+# #     {"_id": f"{aasIdShort}:submodels_dictionary"},
+# #     {"_id": 0}
+# # )
+# # print(dictionary)
 
-def read_content_of_table(collectionName, tableName):
-    table_content = collectionName.find_one(
-        {"_id": tableName},
-        {"_id": 0}
-    )
-    return table_content
+# def read_content_of_table(collectionName, tableName):
+#     table_content = collectionName.find_one(
+#         {"_id": tableName},
+#         {"_id": 0}
+#     )
+#     return table_content
 
-aas_table_name =  f"{aasIdShort}:submodels_dictionary"
-print(read_content_of_table(collectionName=submodels_collection, tableName=aas_table_name))
+# aas_table_name =  f"{aasIdShort}:submodels_dictionary"
+# print(read_content_of_table(collectionName=submodels_collection, tableName=aas_table_name))
+
+from utility.submodels import read_submodel_element, update_submodel_element
+import os
+
+AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
+# print(read_submodel_element(submodels_collection, f"{AAS_ID_SHORT}:SystemInformation", "Hardware.Processor"))
+update_submodel_element(submodels_collection, f"{AAS_ID_SHORT}:SystemInformation", "Hardware.Memory.DiskFree", "8GB")

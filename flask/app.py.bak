@@ -1,0 +1,41 @@
+from utility.onboarding import edge_device_onboarding
+from utility.submodels import fetch_submodels, aasSM_2_clientJson, clientJson_2_aasSM
+from pymongo import MongoClient
+import os
+
+MONGO_URI = os.environ.get('MONGO_URI')
+AAS_IDSHORT = os.environ.get('AAS_IDSHORT')
+AAS_IDENTIFIER = os.environ.get('AAS_IDENTIFIER')
+AASX_SERVER = os.environ.get('AASX_SERVER')
+
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client['aas_edge_database']
+shells_collection = db['shells']
+submodels_collection = db['submodels']
+
+# Onboarding
+# edge_device_onboarding(aasxServerUrl=AASX_SERVER, aasIdentifier=AAS_IDENTIFIER, aasIdShort=AAS_IDSHORT, shells_collection=shells_collection, submodels_collection=submodels_collection)
+
+# fetch_submodels(collectionName=submodels_collection, aasxServerUrl=AASX_SERVER, aasIdShort=AAS_IDSHORT)
+
+import json
+template_file_path = 'test.json'
+
+# Open the JSON file and load its contents
+with open(template_file_path, 'r') as f:
+    template_data = json.load(f)
+
+client_file_path = 'test1.json'
+
+# Open the JSON file and load its contents
+with open(client_file_path, 'r') as f:
+    client_data = json.load(f)
+
+
+# Now 'data' contains the contents of the JSON file
+# clientJson = aasSM_2_clientJson(data["submodelElements"])
+# # print(clientJson)
+# print(json.dumps(clientJson, indent=4))
+clientJson_2_aasSM(clientJson=client_data, templateJson=template_data["submodelElements"])
+print(json.dumps(template_data, indent=4))
