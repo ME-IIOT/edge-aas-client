@@ -6,6 +6,7 @@ import json
 import concurrent.futures
 from functools import partial
 
+from app import AASX_SERVER, AAS_IDENTIFIER
 
 # FETCHING from server
 def read_content_of_table(collectionName: Collection, tableName: str) -> typing.Dict[str,str]:
@@ -120,7 +121,8 @@ def read_submodel_element(collectionName: Collection, tableName:str, submodelEle
     return ({"error": f"Submodel element {wrong_submodel_element} not found under {correct_submodel_element}"}, 404)
         
 
-def update_submodel_element(collectionName: Collection, tableName: str, submodelElements: str, updated_data: typing.Dict | str):
+def update_submodel_element(collectionName: Collection, tableName: str, submodelElements: str, 
+                            updated_data: typing.Dict | str, sync_with_server: bool = False) -> typing.Tuple[typing.Dict, int]:
     submodel_template = read_content_of_table(collectionName=collectionName,
                                                 tableName=tableName)
     if submodel_template is None:
@@ -147,7 +149,11 @@ def update_submodel_element(collectionName: Collection, tableName: str, submodel
                             upsert=True
                         )
                         if insert_result.acknowledged:
-                            return ({"message": f"Submodel element {submodel_element} updated successfully"}, 200)
+                            if sync_with_server:
+                                # TODO: central handling like Reactor or using MQTT
+                                pass
+                            else:
+                                return ({"message": f"Submodel element {submodel_element} updated successfully"}, 200)                            
                         else:
                             return ({"error": f"Failed to update submodel element {submodel_element}"}, 500)
                     else:

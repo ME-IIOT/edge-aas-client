@@ -67,15 +67,15 @@ def submodel(submodelIdShort):
                 
                 submodel_template_json = json.dumps(submodel_template)
 
-                # response = requests.put(url=aasxUrl, data=submodel_template_json)
-                # # response = requests.put(url=aasxUrl, data=submodel_template)
+                response = requests.put(url=aasxUrl, data=submodel_template_json)
+                # response = requests.put(url=aasxUrl, data=submodel_template)
                 
-                # print(response)
-                # if response.status_code == 204:
-                #     return jsonify({"message": "Submodel updated successfully"}), 200
-                # else:
-                #     return jsonify({"error": "Failed to update submodel to server"}), 500
-                return jsonify({"message": "Submodel updated successfully"}), 200
+                print(response)
+                if response.status_code == 204:
+                    return jsonify({"message": "Submodel updated successfully"}), 200
+                else:
+                    return jsonify({"error": "Failed to update submodel to server"}), 500
+                # return jsonify({"message": "Submodel updated successfully"}), 200
             else:
                 return jsonify({"error": "Failed to update submodel"}), 500
             
@@ -111,20 +111,20 @@ import os
 @app.route('/admin', methods=['GET'])
 def admin():
     if request.method == 'GET':
-        folder_path = "expose_script"
+        folder_path = "exposed_script"
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             # List all files in the folder
             files = os.listdir(folder_path)
             return jsonify(files), 200
         else:
-            return "Folder 'expose_script' does not exist or is not a directory", 404
+            return "Folder 'exposed_script' does not exist or is not a directory", 404
     else:
         return "Method not allowed", 405
     
 @app.route('/admin/<script_name>', methods=['GET', 'PUT'])
 def admin_script(script_name):
     if request.method == 'GET':
-        folder_path = "expose_script"
+        folder_path = "exposed_script"
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             # List all files in the folder
             files = os.listdir(folder_path)
@@ -134,12 +134,12 @@ def admin_script(script_name):
             else:
                 return "Script not found", 404
         else:
-            return "Folder 'expose_script' does not exist or is not a directory", 404
+            return "Folder 'exposed_script' does not exist or is not a directory", 404
     elif request.method == 'PUT':
         content_type = request.headers.get('Content-Type')
         if content_type == 'text/plain':
             text_data = request.data.decode('utf-8')
-        folder_path = "expose_script"
+        folder_path = "exposed_script"
         if os.path.exists(folder_path) and os.path.isdir(folder_path):
             # List all files in the folder
             files = os.listdir(folder_path)
@@ -150,7 +150,7 @@ def admin_script(script_name):
             else:
                 return "Script not found", 404
         else:
-            return "Folder 'expose_script' does not exist or is not a directory", 404
+            return "Folder 'exposed_script' does not exist or is not a directory", 404
     else:
         return "Method not allowed", 405
     

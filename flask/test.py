@@ -59,4 +59,61 @@ import os
 
 AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
 # print(read_submodel_element(submodels_collection, f"{AAS_ID_SHORT}:SystemInformation", "Hardware.Processor"))
-update_submodel_element(submodels_collection, f"{AAS_ID_SHORT}:SystemInformation", "Hardware.Memory.DiskFree", "8GB")
+# update_submodel_element(submodels_collection, f"{AAS_ID_SHORT}:SystemInformation", "Hardware.Memory.DiskFree", "8GB")
+import subprocess
+import typing
+# # Specify the path to your Bash script
+# bash_script_path = '/path/to/your/script.sh'
+
+
+# # Execute the Bash script and capture the output
+# result = subprocess.run(['bash', 'exposed_script/sysInfo.sh'], capture_output=True, text=True)
+
+# if result.returncode == 0:
+#     # Print the output of the Bash script
+#     print("Output:", result.stdout)
+# else:
+#     # Print any error message if the command failed
+#     print("Error:", result.stderr)
+from functools import partial
+import concurrent.futures
+
+# folder_path = "exposed_script"
+# if os.path.exists(folder_path) and os.path.isdir(folder_path):
+#     # List all files in the folder
+#     files = os.listdir(folder_path)
+#     files.remove("__init__.py")
+# print(files)
+
+# def execute_files(files: typing.List[str], folder_path: str) -> None:
+#     execute_function = partial(execute_single_file, folder_path=folder_path)
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         executor.map(execute_function, files)
+
+# def execute_single_file(file: str, folder_path: str) -> None:
+#     if file.endswith(".py"):
+#         subprocess.run(['python', f'{folder_path}/{file}'])
+#     # elif file.endswith(".sh"):
+#     #     subprocess.run(['bash', f'{folder_path}/{file}'])
+#     else:
+#         pass
+
+# execute_files(files, folder_path)
+from utility.utility import overwrite_script, check_bash_syntax
+# overwrite_script(original_script_path="exposed_script/active-hello_world-10.py", 
+#                  updated_script_content='print("Hello LNI 4.0 10s!")',
+#                  new_script_path="exposed_script/active-hello_world-10.py")#,
+# #                 new_script_path="exposed_script/sysInfo.sh")
+
+# content, status_code = overwrite_script(
+#     original_script_path="exposed_script/active-hello_world-10.py", 
+#     updated_script_content="""print("Hello LNI 4.0!"
+# """)
+# print(content, status_code)
+
+# Example usage
+bash_script = """
+echo"Hello, World!
+"""
+is_valid = check_bash_syntax(bash_script)
+print(f"Is the syntax valid? {is_valid}")

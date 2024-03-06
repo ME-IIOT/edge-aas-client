@@ -34,7 +34,6 @@ class UpdateServerSubmodelHandler(EdgeHandler):
 
                 # Run GET requests in parallel
                 get_results = await asyncio.gather(*get_tasks)
-                # print(get_results)
 
                 # Prepare PUT requests based on GET responses
                 put_tasks = []
