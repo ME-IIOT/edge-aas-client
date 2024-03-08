@@ -5,9 +5,12 @@ import requests
 import json
 import concurrent.futures
 from functools import partial
+from reactor.reactor import AsyncReactor
+from reactor.handler import HandlerTypeName, Job
+import asyncio
+from reactor import REACTOR
 
-from app import AASX_SERVER, AAS_IDENTIFIER
-
+reactor = REACTOR
 # FETCHING from server
 def read_content_of_table(collectionName: Collection, tableName: str) -> typing.Dict[str,str]:
     table_content = collectionName.find_one(
@@ -29,9 +32,12 @@ def extract_key_value(jsonData: typing.Dict[str,str]) -> typing.Tuple[typing.Lis
     keys, values = zip(*jsonData.items()) if jsonData else ([], [])
     return list(keys), list(values)
 
+
+# TODO: change if need aas_uid for url? only when concept of REST API for submodel is incorrect
 def fetch_single_submodel(  submodel_id: str, submodels_collection: Collection , 
                             aasxServerUrl: str, aasIdShort:str):
-    submodel_url = aasxServerUrl + "submodels/" + encode_base64url(submodel_id)
+    #submodel_url = aasxServerUrl + "submodels/" + encode_base64url(submodel_id)
+    submodel_url = f"{aasxServerUrl}/submodels/{encode_base64url(submodel_id)}"
     response = requests.get(submodel_url)
     if response.status_code == 200:
         body = json.loads(response.text)
@@ -57,8 +63,6 @@ def fetch_submodels(collectionName: Collection, aasxServerUrl: str, aasIdShort: 
     
 
 # PARSER
-# "value of elem key is in submodel/<submodel_id>/elements/<elem_id>/deep is a dictionary, but put it in a list (only 1 element) to match the recursive structure"
-# templateJSON is an in/out parameter (reference)
 def clientJson_2_aasSM(clientJson: typing.Dict, templateJson: typing.List):
     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
     try:
@@ -78,7 +82,8 @@ def clientJson_2_aasSM(clientJson: typing.Dict, templateJson: typing.List):
         raise KeyError(f"Key {element['idShort']} not found in RequestBody")
     except TypeError:
         raise TypeError(f"Type of {element['idShort']} is not match")
-def aasSM_2_clientJson(submodelElements):
+    
+def aasSM_2_clientJson(submodelElements: typing.List[typing.Dict]) -> typing.Dict:
     clientJson = {} # init
     
     for element in submodelElements:
@@ -95,8 +100,73 @@ def aasSM_2_clientJson(submodelElements):
             pass    
     return clientJson
 
+def update_aasx_server(json_data: typing.Dict, 
+                       aas_uid: str, 
+                       submodel_uid: str, 
+                       aasx_server: str,
+                       submodelElements: str = None) -> typing.Tuple[typing.Dict, int]:
+    # encode base64
+    aas_uid = encode_base64url(aas_uid)
+    submodel_uid = encode_base64url(submodel_uid)
+
+    if submodelElements is None:
+        aasxUrl = f"{aasx_server}/shells/{aas_uid}/submodels/{submodel_uid}"
+    else:
+        aasxUrl = f"{aasx_server}/shells/{aas_uid}/submodels/{submodel_uid}/submodel-elements/{submodelElements}"
+    
+    json_data = json.dumps(json_data)
+
+    response = requests.put(url=aasxUrl, data=json_data)
+
+    if response.status_code == 204:
+        return ({"message": f"Submodel to server updated successfully"}, 204)
+    else:
+        return ({"error": f"Failed to update submodel to server"}, 500)
+
+def update_submodel(collectionName: Collection,
+                    aas_id_short: str,
+                    submodel_id_short: str,
+                    aas_uid:str,
+                    aasx_server: str,
+                    updated_data: typing.Dict,
+                    sync_with_server: bool = None) -> typing.Tuple[typing.Dict, int]:
+    submodel_template = read_content_of_table(collectionName=collectionName,
+                                                tableName=f"{aas_id_short}:{submodel_id_short}")
+    if submodel_template is None:
+        return ({"error": "Submodel not found"},404)
+    else:
+        try:
+            clientJson_2_aasSM(clientJson=updated_data, templateJson= submodel_template["submodelElements"])
+        except KeyError as e:
+            return ({"error": str(e)}, 500)
+        insert_result = collectionName.update_one(
+            {"_id": f"{aas_id_short}:{submodel_id_short}"},
+            {"$set": submodel_template},
+            upsert=True
+        )
+        if insert_result.acknowledged:
+            if sync_with_server:
+                submodel_dictionary = read_content_of_table(collectionName=collectionName,
+                                                    tableName=f"{aas_id_short}:submodels_dictionary")
+                submodel_uid = submodel_dictionary.get(submodel_id_short)
+                # return update_aasx_server(json_data=submodel_template, aas_uid=aas_uid, submodel_uid=submodel_uid, aasx_server=aasx_server)
+                # return ({"message": "Submodel updated successfully"}, 200)
+                asyncio.run(reactor.add_job(Job(type_=HandlerTypeName.UPDATE_AASX_SUBMODEL_SERVER.value, 
+                                               requestBody={"json_data": submodel_template, 
+                                                            "aas_uid": aas_uid, 
+                                                            "submodel_uid": submodel_uid, 
+                                                            "aasx_server": aasx_server})))
+                
+            return ({"message": "Submodel updated successfully"}, 200)    
+        else:
+            return ({"error": "Failed to update submodel"}, 500)
+
 # Submodul Elements
-def read_submodel_element(collectionName: Collection, tableName:str, submodelElements: str) -> typing.Tuple[typing.Dict, int]:
+def read_submodel_element(collectionName: Collection,
+                          aas_id_short: str,
+                          submodel_id_short: str, 
+                          submodelElements: str) -> typing.Tuple[typing.Dict, int]:
+    tableName = f"{aas_id_short}:{submodel_id_short}"
     submodel_template = read_content_of_table(collectionName=collectionName,
                                                 tableName=tableName)
     if submodel_template is None:
@@ -116,15 +186,22 @@ def read_submodel_element(collectionName: Collection, tableName:str, submodelEle
             wrong_submodel_element = submodel_element
             break
     else:
+        submodel_element_collection = aasSM_2_clientJson(submodel_element_collection)
         return (submodel_element_collection, 200)
     
     return ({"error": f"Submodel element {wrong_submodel_element} not found under {correct_submodel_element}"}, 404)
         
 
-def update_submodel_element(collectionName: Collection, tableName: str, submodelElements: str, 
+def update_submodel_element(collectionName: Collection, 
+                            aas_id_short: str,
+                            submodel_id_short: str, 
+                            submodelElements: str, 
+                            aas_uid:str,
+                            aasx_server: str,
                             updated_data: typing.Dict | str, sync_with_server: bool = False) -> typing.Tuple[typing.Dict, int]:
+    submodelIdTableName = f"{aas_id_short}:{submodel_id_short}"
     submodel_template = read_content_of_table(collectionName=collectionName,
-                                                tableName=tableName)
+                                                tableName=submodelIdTableName)
     if submodel_template is None:
         return ({"error": "Submodel not found"},404)
     else:
@@ -140,18 +217,40 @@ def update_submodel_element(collectionName: Collection, tableName: str, submodel
                         if isinstance(element["value"], str) and isinstance(updated_data, str):
                             element["value"] = updated_data
                         elif isinstance(element["value"], list) and isinstance(updated_data, dict):
-                            clientJson_2_aasSM(clientJson=updated_data, templateJson= element["value"])
+                            try:
+                                clientJson_2_aasSM(clientJson=updated_data, templateJson= element["value"])
+                                requestBodyJson = element["value"]
+                            except KeyError as e:
+                                return ({"error": str(e)}, 500)
                         else:
                             return ({"error": "Updated data and submodel element type mismatch"}, 500)
                         insert_result = collectionName.update_one(
-                            {"_id": tableName},
+                            {"_id": submodelIdTableName},
                             {"$set": submodel_template},
                             upsert=True
                         )
                         if insert_result.acknowledged:
                             if sync_with_server:
                                 # TODO: central handling like Reactor or using MQTT
-                                pass
+                                submodel_dictionary = read_content_of_table(collectionName=collectionName,
+                                                    tableName=f"{aas_id_short}:submodels_dictionary")
+                                submodel_uid = submodel_dictionary.get(submodel_id_short)
+                                # encode base64
+                                aas_uid = encode_base64url(aas_uid)
+                                submodel_uid = encode_base64url(submodel_uid)
+
+                                # aasxUrl = f"{AASX_SERVER}/shells/{aas_uid}/submodels/{submodel_uid}/submodel-elements/{submodelElements}"
+
+                                # requestBodyJson = json.dumps(requestBodyJson)
+
+                                # response = requests.put(url=aasxUrl, data=requestBodyJson)
+
+                                # if response.status_code == 204:
+                                #     return ({"message": f"Submodel element {submodel_element} to server updated successfully"}, 204)
+                                # else:
+                                #     return ({"error": f"Failed to update submodel element {submodel_element} to server"}, 500)
+                                return update_aasx_server(json_data=requestBodyJson, aas_uid=aas_uid, submodel_uid=submodel_uid, 
+                                                          aasx_server=aasx_server, submodelElements=submodelElements)
                             else:
                                 return ({"message": f"Submodel element {submodel_element} updated successfully"}, 200)                            
                         else:
@@ -166,3 +265,19 @@ def update_submodel_element(collectionName: Collection, tableName: str, submodel
             return ({"error": f"Submodel element {wrong_submodel_element} not found"}, 404)
         
         return ({"error": f"Submodel element {submodel_element} not found"}, 404)
+    
+
+# def read_time_series_record_template(collectionName: Collection, 
+#                             aas_id_short: str) -> typing.Tuple[typing.Dict, int]:
+#     submodelIdTableName = f"{aas_id_short}:TimeSeries"
+#     submodel_template = read_content_of_table(collectionName=collectionName,
+#                                                 tableName=submodelIdTableName)
+#     if submodel_template is None:
+#         return ({"error": "Submodel not found"},404)
+#     else:
+#         time_series_template = aasSM_2_clientJson(submodel_template["submodelElements"])
+#         record_template = time_series_template.get("Metadata").get("Record")
+#         return (record_template, 200)
+        
+        
+

@@ -59,7 +59,8 @@ from functools import partial
 def first_fetch_single_submodel(   submodel_id: str, submodels_collection: Collection , 
                             aasxServerUrl: str, aasIdShort:str,
                             submodels_dictionary: typing.Dict[str, str]):
-    submodel_url = aasxServerUrl + "submodels/" + encode_base64url(submodel_id)
+    # submodel_url = aasxServerUrl + "submodels/" + encode_base64url(submodel_id)
+    submodel_url = f"{aasxServerUrl}/submodels/{encode_base64url(submodel_id)}"
     response = requests.get(submodel_url)
     if response.status_code == 200:
         body: typing.Dict = json.loads(response.text)
@@ -88,8 +89,10 @@ def onboarding_submodels(aasxServerUrl: str, aasIdShort: str, submodels_id: typi
         upsert=True
     )
     
-def edge_device_onboarding(aasxServerUrl: str, aasIdentifier: str, aasIdShort: str, shells_collection: Collection, submodels_collection: Collection):
-    url = aasxServerUrl + "shells/" + encode_base64url(aasIdentifier)# + "/submodels"
+def edge_device_onboarding(aasxServerUrl: str, aasIdentifier: str, aasIdShort: str, 
+                           shells_collection: Collection, submodels_collection: Collection):
+    # url = aasxServerUrl + "shells/" + encode_base64url(aasIdentifier)
+    url = f"{aasxServerUrl}/shells/{encode_base64url(aasIdentifier)}"
     # Send GET request
     response = requests.get(url)
     

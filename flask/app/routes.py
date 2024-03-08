@@ -4,14 +4,23 @@ from utility.submodels import (read_content_of_table,
                                aasSM_2_clientJson,
                                clientJson_2_aasSM,
                                read_submodel_element,
-                               update_submodel_element)
-from utility.utility import encode_base64url
+                               update_submodel_element,
+                               update_submodel)
+# from utility.utility import encode_base64url
 from flask import request, Flask, jsonify
 import json
 import requests
+from reactor.reactor import AsyncReactor
+from reactor.handler import HandlerTypeName, Job
+import asyncio
+reactor = AsyncReactor()
+
 @app.route('/', methods=['GET'])
 def root():
     if request.method == 'GET':
+        # asyncio.run(reactor.add_job(job=Job(type_=HandlerTypeName.TestHandler.value, 
+        #                         request_body={"message": "Hello, World!"}))
+        # )
         # Fetch a document for demonstration
         shell_document = read_content_of_table(collectionName=submodels_collection, 
                                             tableName=f"{AAS_ID_SHORT}:submodels_dictionary")
@@ -35,50 +44,55 @@ def submodel(submodelIdShort):
             clientJson = aasSM_2_clientJson(submodel_template["submodelElements"])
             return jsonify(clientJson), 200
     elif request.method == 'PUT':
-        updated_data = request.json
+        # updated_data = request.json
+        # submodel_template = read_content_of_table(collectionName=submodels_collection,
+        #                                             tableName=f"{AAS_ID_SHORT}:{submodelIdShort}")
+        # if submodel_template is None:
+        #     return jsonify({"error": "Submodel not found"}), 404
+        # else:
+        #     try:
+        #         clientJson_2_aasSM(clientJson=updated_data,
+        #                        templateJson= submodel_template["submodelElements"])
+        #     except KeyError as e:
+        #         return jsonify({"error": str(e)}), 500
+        #     insert_result = submodels_collection.update_one(
+        #         {"_id": f"{AAS_ID_SHORT}:{submodelIdShort}"},
+        #         {"$set": submodel_template},
+        #         upsert=True
+        #     )
+        #     if insert_result.acknowledged:
+        #         # TODO: Do we need to result?
+        #         submodel_dictionary = read_content_of_table(collectionName=submodels_collection,
+        #                                             tableName=f"{AAS_ID_SHORT}:submodels_dictionary")
+        #         submodel_uid = submodel_dictionary.get(submodelIdShort)
+                
+        #         # encode base64
+        #         aas_uid = encode_base64url(AAS_IDENTIFIER)
+        #         submodel_uid = encode_base64url(submodel_uid)
+                
+        #         # requests.put(f'{AASX_SERVER}submodels/{submodel_uid}', timeout=0)
+        #         aasxUrl = f'{AASX_SERVER}shells/{aas_uid}/submodels/{submodel_uid}'
+                
+        #         submodel_template_json = json.dumps(submodel_template)
 
-        submodel_template = read_content_of_table(collectionName=submodels_collection,
-                                                    tableName=f"{AAS_ID_SHORT}:{submodelIdShort}")
-        if submodel_template is None:
-            return jsonify({"error": "Submodel not found"}), 404
-        else:
-            try:
-                clientJson_2_aasSM(clientJson=updated_data,
-                               templateJson= submodel_template["submodelElements"])
-            except KeyError as e:
-                return jsonify({"error": str(e)}), 500
-            insert_result = submodels_collection.update_one(
-                {"_id": f"{AAS_ID_SHORT}:{submodelIdShort}"},
-                {"$set": submodel_template},
-                upsert=True
-            )
-            if insert_result.acknowledged:
-                # TODO: Do we need to result?
-                submodel_dictionary = read_content_of_table(collectionName=submodels_collection,
-                                                    tableName=f"{AAS_ID_SHORT}:submodels_dictionary")
-                submodel_uid = submodel_dictionary.get(submodelIdShort)
+        #         response = requests.put(url=aasxUrl, data=submodel_template_json)
+        #         # response = requests.put(url=aasxUrl, data=submodel_template)
                 
-                # encode base64
-                aas_uid = encode_base64url(AAS_IDENTIFIER)
-                submodel_uid = encode_base64url(submodel_uid)
-                
-                # requests.put(f'{AASX_SERVER}submodels/{submodel_uid}', timeout=0)
-                aasxUrl = f'{AASX_SERVER}shells/{aas_uid}/submodels/{submodel_uid}'
-                
-                submodel_template_json = json.dumps(submodel_template)
-
-                response = requests.put(url=aasxUrl, data=submodel_template_json)
-                # response = requests.put(url=aasxUrl, data=submodel_template)
-                
-                print(response)
-                if response.status_code == 204:
-                    return jsonify({"message": "Submodel updated successfully"}), 200
-                else:
-                    return jsonify({"error": "Failed to update submodel to server"}), 500
-                # return jsonify({"message": "Submodel updated successfully"}), 200
-            else:
-                return jsonify({"error": "Failed to update submodel"}), 500
-            
+        #         if response.status_code == 204:
+        #             return jsonify({"message": "Submodel updated successfully"}), 204
+        #         else:
+        #             return jsonify({"error": "Failed to update submodel to server"}), 500
+        #         # return jsonify({"message": "Submodel updated successfully"}), 200
+        #     else:
+        #         return jsonify({"error": "Failed to update submodel"}), 500
+        return update_submodel(collectionName=submodels_collection,
+                        aas_id_short=AAS_ID_SHORT,
+                        submodel_id_short=submodelIdShort,
+                        aas_uid=AAS_IDENTIFIER,
+                        aasx_server=AASX_SERVER,
+                        updated_data=request.json,
+                        sync_with_server=True)
+    
 # TODO: Not sure if i need this endpoint public it
 # @app.route('/submodels/<submodelIdShort>/submodel-elements/<submodelElementsPath>', methods=['GET', 'PUT'])
 # def submodelElements(submodelIdShort, submodelElementsPath):

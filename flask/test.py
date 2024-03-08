@@ -54,7 +54,6 @@ submodels_collection = db[SUBMODELS_COLLECTION_NAME]
 # aas_table_name =  f"{aasIdShort}:submodels_dictionary"
 # print(read_content_of_table(collectionName=submodels_collection, tableName=aas_table_name))
 
-from utility.submodels import read_submodel_element, update_submodel_element
 import os
 
 AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
@@ -99,7 +98,7 @@ import concurrent.futures
 #         pass
 
 # execute_files(files, folder_path)
-from utility.utility import overwrite_script, check_bash_syntax
+from utility.submodels import read_submodel_element
 # overwrite_script(original_script_path="exposed_script/active-hello_world-10.py", 
 #                  updated_script_content='print("Hello LNI 4.0 10s!")',
 #                  new_script_path="exposed_script/active-hello_world-10.py")#,
@@ -112,8 +111,18 @@ from utility.utility import overwrite_script, check_bash_syntax
 # print(content, status_code)
 
 # Example usage
-bash_script = """
-echo"Hello, World!
-"""
-is_valid = check_bash_syntax(bash_script)
-print(f"Is the syntax valid? {is_valid}")
+# bash_script = """
+# echo"Hello, World!
+# """
+# is_valid = check_bash_syntax(bash_script)
+# print(f"Is the syntax valid? {is_valid}")
+
+# template, status_code = read_time_series_record_template(collectionName=submodels_collection, 
+#                                                          aas_id_short=AAS_ID_SHORT)
+# print(template)
+
+template, status_code = read_submodel_element(collectionName=submodels_collection,
+                                              aas_id_short=AAS_ID_SHORT,
+                                              submodel_id_short="TimeSeries",
+                                              submodelElements="Metadata.Record")
+print(template, status_code)
