@@ -121,50 +121,50 @@ def submodel(submodelIdShort):
 #         return jsonify(message), status_code
         
 # Test idea
-import os
-@app.route('/admin', methods=['GET'])
-def admin():
-    if request.method == 'GET':
-        folder_path = "exposed_script"
-        if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            # List all files in the folder
-            files = os.listdir(folder_path)
-            return jsonify(files), 200
-        else:
-            return "Folder 'exposed_script' does not exist or is not a directory", 404
-    else:
-        return "Method not allowed", 405
+# import os
+# @app.route('/admin', methods=['GET'])
+# def admin():
+#     if request.method == 'GET':
+#         folder_path = "exposed_script"
+#         if os.path.exists(folder_path) and os.path.isdir(folder_path):
+#             # List all files in the folder
+#             files = os.listdir(folder_path)
+#             return jsonify(files), 200
+#         else:
+#             return "Folder 'exposed_script' does not exist or is not a directory", 404
+#     else:
+#         return "Method not allowed", 405
     
-@app.route('/admin/<script_name>', methods=['GET', 'PUT'])
-def admin_script(script_name):
-    if request.method == 'GET':
-        folder_path = "exposed_script"
-        if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            # List all files in the folder
-            files = os.listdir(folder_path)
-            if script_name in files:
-                with open(f"{folder_path}/{script_name}", "r") as file:
-                    return file.read(), 200
-            else:
-                return "Script not found", 404
-        else:
-            return "Folder 'exposed_script' does not exist or is not a directory", 404
-    elif request.method == 'PUT':
-        content_type = request.headers.get('Content-Type')
-        if content_type == 'text/plain':
-            text_data = request.data.decode('utf-8')
-        folder_path = "exposed_script"
-        if os.path.exists(folder_path) and os.path.isdir(folder_path):
-            # List all files in the folder
-            files = os.listdir(folder_path)
-            if script_name in files:
-                with open(f"{folder_path}/{script_name}", "w") as file:
-                    file.write(text_data)
-                return "Script updated successfully", 200
-            else:
-                return "Script not found", 404
-        else:
-            return "Folder 'exposed_script' does not exist or is not a directory", 404
-    else:
-        return "Method not allowed", 405
+# @app.route('/admin/<script_name>', methods=['GET', 'PUT'])
+# def admin_script(script_name):
+#     if request.method == 'GET':
+#         folder_path = "exposed_script"
+#         if os.path.exists(folder_path) and os.path.isdir(folder_path):
+#             # List all files in the folder
+#             files = os.listdir(folder_path)
+#             if script_name in files:
+#                 with open(f"{folder_path}/{script_name}", "r") as file:
+#                     return file.read(), 200
+#             else:
+#                 return "Script not found", 404
+#         else:
+#             return "Folder 'exposed_script' does not exist or is not a directory", 404
+#     elif request.method == 'PUT':
+#         content_type = request.headers.get('Content-Type')
+#         if content_type == 'text/plain':
+#             text_data = request.data.decode('utf-8')
+#         folder_path = "exposed_script"
+#         if os.path.exists(folder_path) and os.path.isdir(folder_path):
+#             # List all files in the folder
+#             files = os.listdir(folder_path)
+#             if script_name in files:
+#                 with open(f"{folder_path}/{script_name}", "w") as file:
+#                     file.write(text_data)
+#                 return "Script updated successfully", 200
+#             else:
+#                 return "Script not found", 404
+#         else:
+#             return "Folder 'exposed_script' does not exist or is not a directory", 404
+#     else:
+#         return "Method not allowed", 405
     

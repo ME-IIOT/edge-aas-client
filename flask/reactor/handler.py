@@ -31,6 +31,31 @@ async def perform_http_request(method: str, url: str, data=None, headers=None):
     except Exception as e:
         return ({"error": f"An unexpected error occurred: {str(e)}"}, 500)
 
+# def perform_http_request(method: str, url: str, data=None, headers=None):
+#     """
+#     Perform a synchronous HTTP request and handle exceptions.
+
+#     Parameters:
+#     - method: The HTTP method to use ('GET', 'PUT', 'POST', etc.).
+#     - url: The URL for the request.
+#     - data: The request payload, optional.
+#     - headers: Dictionary of request headers, optional.
+
+#     Returns:
+#     A tuple containing the response data and the HTTP status code.
+#     """
+#     try:
+#         response = requests.request(method, url, data=data, headers=headers)
+#         response_data = response.text  # Assuming response is text
+#         if response.status_code in [200, 201, 204]:
+#             return ({"message": response_data}, response.status_code)
+#         else:
+#             return ({"error": f"HTTP request failed: {response_data}"}, response.status_code)
+#     except requests.RequestException as e:
+#         return ({"error": f"HTTP Client Error occurred: {str(e)}"}, 500)
+#     except Exception as e:
+#         return ({"error": f"An unexpected error occurred: {str(e)}"}, 500)
+    
 class Job:
     type: str
     requestBody: typing.Dict
@@ -94,6 +119,34 @@ class UpdateAasxSubmodelServerHandler(Handler):
         # Reuse the perform_http_request function with the required parameters
         response, status = await perform_http_request("PUT", aasxUrl, data=json_data, headers=headers)
         print("Response from Server: ", response, status)
+
+# class UpdateAasxSubmodelServerHandler:
+#     def handle(self, job):
+#         print("UpdateAasxSubmodelServerHandler.handle() called")
+#         json_data = job.requestBody.get("json_data")
+#         aas_uid = job.requestBody.get("aas_uid")
+#         submodel_uid = job.requestBody.get("submodel_uid")
+#         aasx_server = job.requestBody.get("aasx_server")
+
+#         # Your encoding functions here
+#         aas_uid = encode_base64url(aas_uid)
+#         submodel_uid = encode_base64url(submodel_uid)
+
+#         aasxUrl = f"{aasx_server}/shells/{aas_uid}/submodels/{submodel_uid}"
+        
+#         json_data = json.dumps(json_data)
+
+#         print("JSON Data: ", json_data)
+#         print("AASX URL: ", aasxUrl)
+
+#         headers = {"Content-Type": "application/json"}
+
+#         # Use ThreadPoolExecutor to run the synchronous perform_http_request function
+#         with ThreadPoolExecutor(max_workers=5) as executor:
+#             future = executor.submit(perform_http_request, "PUT", aasxUrl, data=json_data, headers=headers)
+#             response, status = future.result()
+#             print("Response from Server: ", response, status)
+
 
 class UpdateAasxSubmodelElementServerHandler(Handler):
     async def handle(self, job: Job):

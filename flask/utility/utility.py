@@ -185,15 +185,17 @@ def execute_files_in_folder(folder_path: str) -> None:
     
 def execute_files(files: typing.List[str], folder_path: str) -> None:
     execute_function = partial(execute_single_file, folder_path=folder_path)
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
         executor.map(execute_function, files)
 
 def execute_single_file(file: str, folder_path: str) -> None:
     if file.endswith(".py"):
         active_state, file_name, intervall = extract_file_parts(file)
         if active_state:
-            if int(time.time()) % intervall == 0:
-                subprocess.run(['python', f'{folder_path}/{file}'])
+            # if int(time.time()) % intervall == 0:
+            #     subprocess.run(['python', f'{folder_path}/{file}'])
+            subprocess.run(['python', f'{folder_path}/{file}'])
         
             # elif file.endswith(".sh"):
             #     subprocess.run(['bash', f'{folder_path}/{file}'])

@@ -1,7 +1,24 @@
 import subprocess
 import json
 from datetime import datetime
+import os
+import sys
+from pymongo import MongoClient
 
+# Add the path to the sys.path list
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from utility.submodels import update_submodel
+# MongoDB connection
+MONGO_URI = os.environ.get('MONGO_URI')
+AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
+AAS_IDENTIFIER = os.environ.get('AAS_IDENTIFIER')
+AASX_SERVER = os.environ.get('AASX_SERVER')
+
+client = MongoClient(MONGO_URI)
+db = client['aas_edge_database']
+shells_collection = db['shells']
+submodels_collection = db['submodels']
 def run_command(command):
     try:
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -52,7 +69,20 @@ def display_system_info():
         "HealthStatus": "NORMAL",
         "LastUpdate": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
     }
-    return json.dumps(system_info, indent=4)
+    return system_info
 
 # Call the function to display the information and print the JSON output
-print(display_system_info())
+# print(display_system_info())
+
+def update_system_info():
+    update_submodel(collectionName=submodels_collection,
+                    aas_id_short= AAS_ID_SHORT,
+                    submodel_id_short= "SystemInformation",
+                    aas_uid=AAS_IDENTIFIER,
+                    aasx_server=AASX_SERVER,
+                    updated_data=display_system_info(),
+                    sync_with_server=True
+                    )
+    
+
+

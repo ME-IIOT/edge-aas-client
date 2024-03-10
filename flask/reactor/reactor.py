@@ -49,6 +49,7 @@ class AsyncReactor(metaclass=Singleton):
         if job is None:
             return
         await handler.handle(job) # Handle the job base on the handler passed by parameter
+        # asyncio.create_task(handler.handle(job))
         self.jobs_queue.task_done() # Mark the job as done
 
     # Register class of Handler at the start of project (or even later)

@@ -133,6 +133,7 @@ def update_submodel(collectionName: Collection,
     submodel_template = read_content_of_table(collectionName=collectionName,
                                                 tableName=f"{aas_id_short}:{submodel_id_short}")
     if submodel_template is None:
+        print("Submodel not found")
         return ({"error": "Submodel not found"},404)
     else:
         try:
@@ -239,18 +240,12 @@ def update_submodel_element(collectionName: Collection,
                                 aas_uid = encode_base64url(aas_uid)
                                 submodel_uid = encode_base64url(submodel_uid)
 
-                                # aasxUrl = f"{AASX_SERVER}/shells/{aas_uid}/submodels/{submodel_uid}/submodel-elements/{submodelElements}"
-
-                                # requestBodyJson = json.dumps(requestBodyJson)
-
-                                # response = requests.put(url=aasxUrl, data=requestBodyJson)
-
-                                # if response.status_code == 204:
-                                #     return ({"message": f"Submodel element {submodel_element} to server updated successfully"}, 204)
-                                # else:
-                                #     return ({"error": f"Failed to update submodel element {submodel_element} to server"}, 500)
-                                return update_aasx_server(json_data=requestBodyJson, aas_uid=aas_uid, submodel_uid=submodel_uid, 
-                                                          aasx_server=aasx_server, submodelElements=submodelElements)
+                                asyncio.run(reactor.add_job(Job(type_=HandlerTypeName.UPDATE_AASX_SUBMODEL_ELEMENT_SERVER.value, 
+                                               requestBody={"json_data": submodel_template, 
+                                                            "aas_uid": aas_uid, 
+                                                            "submodel_uid": submodel_uid,
+                                                            "submodelElements": submodelElements, 
+                                                            "aasx_server": aasx_server})))
                             else:
                                 return ({"message": f"Submodel element {submodel_element} updated successfully"}, 200)                            
                         else:

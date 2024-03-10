@@ -1,5 +1,8 @@
 version: '3.8'
 
+networks:
+  edge_network:
+
 services:
   mongodb:
     image: mongo:4.4
@@ -8,4 +11,22 @@ services:
       - "27018:27017"
     volumes:
       - /db:/data/db
-    restart: always
+    # restart: always
+    networks:               # make it use same network to connect ports
+      - edge_network
+  
+  web:
+    # container_name: django-aas-client-combi
+    image: manhlinh210/flask_aas_edge:amd64-1.0.0
+    ports:
+      - 18000:18000
+    env_file:
+      - aas_client.env
+    networks:               # make it use same network to connect ports
+      - edge_network
+    depends_on:
+      - mongodb           # Make the web service depend on the mongodb service
+    # restart: always
+    # volumes: # for vendor images
+    #   - ./vendor_images:/code/static/vendor_images
+    #   - ./mounted_script:/code/staticfiles/mounted_script
