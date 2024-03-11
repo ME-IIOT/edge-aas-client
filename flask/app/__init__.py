@@ -9,7 +9,7 @@ from reactor.handler import ( HandlerTypeName,
                             UpdateAasxSubmodelServerHandler,
                             TestHandler
                             )
-from scheduler import start_scheduler
+from scheduler import start_scheduler, start_scheduler_async
 from reactor import REACTOR
 app = Flask(__name__)
 
@@ -36,6 +36,20 @@ def activate_scheduler():
     scheduler_thread = threading.Thread(target=start_scheduler, daemon=True)
     scheduler_thread.start()
 
+def run_scheduler_async():
+    # Set up the event loop
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    start_scheduler_async()
+
+    loop.run_forever()
+
+def activate_scheduler_async():
+    # Run the scheduler in a separate thread
+    scheduler_thread = threading.Thread(target=run_scheduler_async, daemon=True)
+    scheduler_thread.start()
+
 # Load environment variables
 MONGO_URI = os.environ.get('MONGO_URI')
 AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
@@ -54,6 +68,7 @@ edge_device_onboarding(aasxServerUrl=AASX_SERVER, aasIdentifier=AAS_IDENTIFIER, 
                        shells_collection=shells_collection, submodels_collection=submodels_collection)
 
 activate_reactor()
-activate_scheduler()
+# activate_scheduler()
+activate_scheduler_async()
 
 from app import routes

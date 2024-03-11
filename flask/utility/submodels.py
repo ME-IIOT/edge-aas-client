@@ -161,6 +161,53 @@ def update_submodel(collectionName: Collection,
             return ({"message": "Submodel updated successfully"}, 200)    
         else:
             return ({"error": "Failed to update submodel"}, 500)
+        
+async def async_update_submodel(collectionName: Collection,
+                          aas_id_short: str,
+                          submodel_id_short: str,
+                          aas_uid: str,
+                          aasx_server: str,
+                          updated_data: typing.Dict,
+                          sync_with_server: bool = None) -> typing.Tuple[typing.Dict, int]:
+    # Assuming read_content_of_table is adapted for async operation
+    submodel_template = await asyncio.to_thread(read_content_of_table, 
+                                                collectionName, 
+                                                f"{aas_id_short}:{submodel_id_short}")
+    if submodel_template is None:
+        print("Submodel not found")
+        return ({"error": "Submodel not found"}, 404)
+    else:
+        try:
+            # Assuming clientJson_2_aasSM can either be run synchronously without much delay, or made async
+            clientJson_2_aasSM(clientJson=updated_data, templateJson=submodel_template["submodelElements"])
+        except KeyError as e:
+            return ({"error": str(e)}, 500)
+
+        # Assuming update_one is adapted for async operation or you're using an async-compatible database client
+        insert_result = await asyncio.to_thread(lambda: collectionName.update_one(
+            {"_id": f"{aas_id_short}:{submodel_id_short}"},
+            {"$set": submodel_template},
+            upsert=True
+        ))
+
+        if insert_result.acknowledged:
+            if sync_with_server:
+                # Assuming read_content_of_table and any other database calls here are async
+                submodel_dictionary = await asyncio.to_thread(  read_content_of_table,
+                                                                collectionName,
+                                                                f"{aas_id_short}:submodels_dictionary")
+                submodel_uid = submodel_dictionary.get(submodel_id_short)
+
+                # Properly handling async call to an external service or async job scheduling
+                await reactor.add_job(Job(type_=HandlerTypeName.UPDATE_AASX_SUBMODEL_SERVER.value, 
+                                          requestBody={"json_data": submodel_template, 
+                                                       "aas_uid": aas_uid, 
+                                                       "submodel_uid": submodel_uid, 
+                                                       "aasx_server": aasx_server}))
+
+            return ({"message": "Submodel updated successfully"}, 200)
+        else:
+            return ({"error": "Failed to update submodel"}, 500)
 
 # Submodul Elements
 def read_submodel_element(collectionName: Collection,

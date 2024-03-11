@@ -1,7 +1,9 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 from utility.utility import execute_files_in_folder
 # from utility.sysInfo import update_system_info
-from scheduler_functions.sysInfo import update_system_info
+from scheduler_functions.sysInfo import update_system_info, update_system_info_async
 from scheduler_functions.time_series import update_time_series_data
 # from scheduler_functions.time_series
 import os
@@ -12,10 +14,40 @@ def start_scheduler():
     # Schedule function to be called every 5 seconds
     # scheduler.add_job(execute_files_in_folder, 'interval', seconds=5, args=["exposed_script"])
     client_polling_interval = int(os.environ.get('CLIENT_POLLING_INTERVAL'))
-    aas_edge_scheduler.add_job(update_system_info, 'interval', seconds=client_polling_interval)
+    # aas_edge_scheduler.add_job(update_system_info, 'interval', seconds=client_polling_interval, max_instances=4)
+    aas_edge_scheduler.add_job(update_system_info_async, 'interval', seconds=client_polling_interval, max_instances=4)
+    
     # Start the scheduler
-    aas_edge_scheduler.add_job(update_time_series_data, 'interval', seconds=10)
+    # TODO: remove later
+    activate_time_series_str = os.environ.get('ACTIVATE_TIMESERIES', '').strip().lower()
+    activate_time_series = activate_time_series_str == 'true'
+    if activate_time_series:
+        time_series_interval = int(os.environ.get('TIMESERIES_INTERVAL'))
+        aas_edge_scheduler.add_job(update_time_series_data, 'interval', seconds=time_series_interval)
+
     aas_edge_scheduler.start()
+
+aas_edge_scheduler_async = AsyncIOScheduler(timezone="UTC")
+
+def start_scheduler_async():
+    global aas_edge_scheduler_async
+    # Schedule function to be called every 5 seconds
+    client_polling_interval = int(os.environ.get('CLIENT_POLLING_INTERVAL', '5'))  # Default to 5 if not set
+    # Schedule the async job
+    client_polling_interval  =  5
+    aas_edge_scheduler_async.add_job(update_system_info_async, 'interval', seconds=client_polling_interval, max_instances=4)
+    
+    # Conditional scheduling based on environment variables
+    activate_time_series_str = os.environ.get('ACTIVATE_TIMESERIES', '').strip().lower()
+    activate_time_series = activate_time_series_str == 'true'
+    if activate_time_series:
+        time_series_interval = int(os.environ.get('TIMESERIES_INTERVAL', '60'))  # Default to 60 if not set
+        # Make sure update_time_series_data is async or wrap the call to be async compatible
+        aas_edge_scheduler_async.add_job(update_time_series_data, 'interval', seconds=time_series_interval)
+
+    # Start the scheduler
+    aas_edge_scheduler_async.start()
+
 
 from apscheduler.schedulers.base import BaseScheduler
 from typing import Callable, Any

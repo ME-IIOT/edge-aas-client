@@ -8,7 +8,7 @@ from pymongo import MongoClient
 # Add the path to the sys.path list
 # sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from utility.submodels import update_submodel
+from utility.submodels import update_submodel, async_update_submodel
 from utility.utility import run_command
 # MongoDB connection
 MONGO_URI = os.environ.get('MONGO_URI')
@@ -84,6 +84,32 @@ def update_system_info():
                     updated_data=display_system_info(),
                     sync_with_server=True
                     )
-    
+import asyncio
+async def update_system_info_async():
+    try:
+        # print("Updating System Information")
+        await async_update_submodel(collectionName=submodels_collection,
+                        aas_id_short= AAS_ID_SHORT,
+                        submodel_id_short= "SystemInformation",
+                        aas_uid=AAS_IDENTIFIER,
+                        aasx_server=AASX_SERVER,
+                        # updated_data= await asyncio.to_thread(display_system_info()),
+                        updated_data= display_system_info(),
+                        sync_with_server=True
+                        )
+    except Exception as e:
+        print(f"Error executing update_system_info_async: {e}")
 
-
+# def update_system_info_async():
+#     try:
+#         print("Updating System Information")
+#         asyncio.run(async_update_submodel(collectionName=submodels_collection,
+#                         aas_id_short= AAS_ID_SHORT,
+#                         submodel_id_short= "SystemInformation",
+#                         aas_uid=AAS_IDENTIFIER,
+#                         aasx_server=AASX_SERVER,
+#                         updated_data= display_system_info(),
+#                         sync_with_server=True
+#                         ))
+#     except Exception as e:
+#         print(f"Error executing update_system_info_async: {e}")
