@@ -201,3 +201,11 @@ def execute_single_file(file: str, folder_path: str) -> None:
             #     subprocess.run(['bash', f'{folder_path}/{file}'])
     else:
         pass
+
+def run_command(command):
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        result.check_returncode()  # Check if the command ran successfully
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return None

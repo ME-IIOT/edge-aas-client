@@ -94,32 +94,14 @@ class UpdateAasxSubmodelServerHandler(Handler):
         
         json_data = json.dumps(json_data)
 
-        # try:
-        #     # Use aiohttp.ClientSession for the asynchronous PUT request
-        #     async with aiohttp.ClientSession() as session:
-        #         async with session.put(url=aasxUrl, data=json_data) as response:
-        #             if response.status == 204:
-        #                 # return ({"message": "Submodel to server updated successfully"}, 204)
-        #                 print({"message":"Submodel to server updated successfully",
-        #                        "status_code": 204})
-        #             else:
-        #                 # For better error handling, consider reading response text
-        #                 error_text = await response.text()
-        #                 #return ({"error": f"Failed to update submodel to server: {error_text}"}, response.status)
-        #                 print({"error": f"Failed to update submodel to server: {error_text}",
-        #                        "status_code": response.status})
-        # except aiohttp.ClientError as e:
-        #     # Handle client-side errors (e.g., connection problems)
-        #     return ({"error": f"HTTP Client Error occurred: {str(e)}"}, 500)
-        # except Exception as e:
-        #     # Handle other unforeseen errors
-        #     return ({"error": f"An unexpected error occurred: {str(e)}"}, 500)
         headers = {"Content-Type": "application/json"}
 
         # Reuse the perform_http_request function with the required parameters
         response, status = await perform_http_request("PUT", aasxUrl, data=json_data, headers=headers)
-        print("Response from Server: ", response, status)
-
+        if status == 204:
+            print({"message": f"Submodel updated to server successfully"}, 204)
+        else:
+            print(response, status)
 # class UpdateAasxSubmodelServerHandler:
 #     def handle(self, job):
 #         print("UpdateAasxSubmodelServerHandler.handle() called")
@@ -167,4 +149,8 @@ class UpdateAasxSubmodelElementServerHandler(Handler):
 
         # Reuse the perform_http_request function with the required parameters
         response, status = await perform_http_request("PUT", aasxUrl, data=json_data, headers=headers)
-        print(response, status)
+        
+        if status == 204:
+            print({"message": f"Submodel element o server updated successfully"}, 204)
+        else:
+            print(response, status)

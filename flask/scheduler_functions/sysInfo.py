@@ -1,14 +1,15 @@
-import subprocess
-import json
+# import subprocess
+# import json
 from datetime import datetime
 import os
-import sys
+# import sys
 from pymongo import MongoClient
 
 # Add the path to the sys.path list
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from utility.submodels import update_submodel
+from utility.utility import run_command
 # MongoDB connection
 MONGO_URI = os.environ.get('MONGO_URI')
 AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
@@ -19,13 +20,13 @@ client = MongoClient(MONGO_URI)
 db = client['aas_edge_database']
 shells_collection = db['shells']
 submodels_collection = db['submodels']
-def run_command(command):
-    try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        result.check_returncode()  # Check if the command ran successfully
-        return result.stdout.strip()
-    except subprocess.CalledProcessError:
-        return None
+# def run_command(command):
+#     try:
+#         result = subprocess.run(command, shell=True, capture_output=True, text=True)
+#         result.check_returncode()  # Check if the command ran successfully
+#         return result.stdout.strip()
+#     except subprocess.CalledProcessError:
+#         return None
 
 def display_system_info():
     # Processor Information
@@ -67,7 +68,7 @@ def display_system_info():
             "BoardTemperature": board_temperature
         },
         "HealthStatus": "NORMAL",
-        "LastUpdate": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        "LastUpdate": datetime.now().isoformat()
     }
     return system_info
 

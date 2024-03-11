@@ -2,6 +2,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from utility.utility import execute_files_in_folder
 # from utility.sysInfo import update_system_info
 from scheduler_functions.sysInfo import update_system_info
+from scheduler_functions.time_series import update_time_series_data
 # from scheduler_functions.time_series
 import os
 
@@ -13,6 +14,7 @@ def start_scheduler():
     client_polling_interval = int(os.environ.get('CLIENT_POLLING_INTERVAL'))
     aas_edge_scheduler.add_job(update_system_info, 'interval', seconds=client_polling_interval)
     # Start the scheduler
+    aas_edge_scheduler.add_job(update_time_series_data, 'interval', seconds=10)
     aas_edge_scheduler.start()
 
 from apscheduler.schedulers.base import BaseScheduler

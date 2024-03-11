@@ -116,13 +116,22 @@ from utility.submodels import read_submodel_element
 # """
 # is_valid = check_bash_syntax(bash_script)
 # print(f"Is the syntax valid? {is_valid}")
-
-# template, status_code = read_time_series_record_template(collectionName=submodels_collection, 
-#                                                          aas_id_short=AAS_ID_SHORT)
-# print(template)
-
-template, status_code = read_submodel_element(collectionName=submodels_collection,
-                                              aas_id_short=AAS_ID_SHORT,
-                                              submodel_id_short="TimeSeries",
-                                              submodelElements="Metadata.Record")
+import datetime
+import random
+from utility.submodels import update_time_series_record_template
+update_data = {'Time': str(datetime.datetime.now().isoformat()), 
+               'SampleTemperature': str(random.randint(10, 20)),
+               'SampleVoltage': str(random.uniform(23.5, 24.5)), 
+               'SampleCurrent': '4'}
+template, status_code = update_time_series_record_template(collectionName=submodels_collection, 
+                                                         aas_id_short=AAS_ID_SHORT,
+                                                         update_data= update_data,
+                                                         sync_with_server=False,
+                                                         aasx_server=os.environ.get('AASX_SERVER'))
 print(template, status_code)
+
+# template, status_code = read_submodel_element(collectionName=submodels_collection,
+#                                               aas_id_short=AAS_ID_SHORT,
+#                                               submodel_id_short="TimeSeries",
+#                                               submodelElements="Metadata.Record")
+# print(template, status_code)
