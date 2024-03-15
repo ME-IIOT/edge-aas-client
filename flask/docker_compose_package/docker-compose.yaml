@@ -1,0 +1,32 @@
+version: '3.8'
+
+networks:
+  edge_network:
+
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: mongo-4.4
+    ports:
+      - "27018:27017"
+    volumes:
+      - /db:/data/db
+    networks:
+      - edge_network
+
+  web:
+    image: manhlinh210/flask_aas_edge:amd64-1.0.2
+    ports:
+      - 18000:18000
+    env_file:
+      - aas_client.env
+    networks:
+      - edge_network
+    depends_on:
+      - mongodb
+    # restart: always
+    # Additional volumes
+    volumes:
+    #   - ./vendor_images:/code/static/vendor_images
+      - ./mounted_script:/app/scheduler_functions/mounted_script
+      - /proc/meminfo:/host_proc/meminfo:ro
