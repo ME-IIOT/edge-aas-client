@@ -11,22 +11,22 @@ services:
       - "27018:27017"
     volumes:
       - /db:/data/db
-    # restart: always
-    networks:               # make it use same network to connect ports
+    networks:
       - edge_network
-  
+
   web:
-    # container_name: django-aas-client-combi
-    image: manhlinh210/flask_aas_edge:amd64-1.0.0
+    image: manhlinh210/flask_aas_edge:amd64-1.0.2
     ports:
       - 18000:18000
     env_file:
       - aas_client.env
-    networks:               # make it use same network to connect ports
+    networks:
       - edge_network
     depends_on:
-      - mongodb           # Make the web service depend on the mongodb service
+      - mongodb
     # restart: always
-    # volumes: # for vendor images
+    # Additional volumes
+    volumes:
     #   - ./vendor_images:/code/static/vendor_images
-    #   - ./mounted_script:/code/staticfiles/mounted_script
+      - ./mounted_script:/app/scheduler_functions/mounted_script
+      - /proc/meminfo:/host_proc/meminfo:ro
