@@ -16,9 +16,11 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install system dependencies, including ca-certificates for HTTPS communication
-RUN apt-get install -y --no-install-recommends ca-certificates && \
-    apt-get clean
-
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc ca-certificates build-essential python3-dev libffi-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
 # Install Flask and other dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire project directory into the container

@@ -9,7 +9,7 @@ from reactor.handler import ( HandlerTypeName,
                             UpdateAasxSubmodelServerHandler,
                             TestHandler
                             )
-from scheduler import start_scheduler, start_scheduler_async
+from scheduler import  start_scheduler_async #start_scheduler,
 from reactor import REACTOR
 app = Flask(__name__)
 
@@ -32,9 +32,9 @@ def activate_reactor():
     reactor_thread = threading.Thread(target=start_async_reactor, daemon=True)
     reactor_thread.start()
 
-def activate_scheduler():
-    scheduler_thread = threading.Thread(target=start_scheduler, daemon=True)
-    scheduler_thread.start()
+# def activate_scheduler():
+#     scheduler_thread = threading.Thread(target=start_scheduler, daemon=True)
+#     scheduler_thread.start()
 
 def run_scheduler_async():
     # Set up the event loop
@@ -52,9 +52,13 @@ def activate_scheduler_async():
 
 # Load environment variables
 MONGO_URI = os.environ.get('MONGO_URI')
+print(MONGO_URI)
 AAS_ID_SHORT = os.environ.get('AAS_IDSHORT')
+print(AAS_ID_SHORT)
 AAS_IDENTIFIER = os.environ.get('AAS_IDENTIFIER')
+print(AAS_IDENTIFIER)
 AASX_SERVER = os.environ.get('AASX_SERVER')
+print(AASX_SERVER)
 
 # MongoDB connection
 client = MongoClient(MONGO_URI)

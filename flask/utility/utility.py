@@ -209,3 +209,14 @@ def run_command(command):
         return result.stdout.strip()
     except subprocess.CalledProcessError:
         return None
+
+import asyncio
+async def run_bash_script(script):
+    process = await asyncio.create_subprocess_exec('bash', script, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+    stdout, stderr = await process.communicate()
+
+    if process.returncode != 0:
+        print(f"cannot execute {script}")
+        return None
+
+    return stdout.decode()
