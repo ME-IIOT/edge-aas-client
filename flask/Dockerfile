@@ -17,7 +17,7 @@ COPY requirements.txt .
 
 # Install system dependencies, including ca-certificates for HTTPS communication
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc ca-certificates build-essential python3-dev libffi-dev bc && \
+    apt-get install -y --no-install-recommends gcc ca-certificates build-essential python3-dev libffi-dev bc sysstat&& \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
