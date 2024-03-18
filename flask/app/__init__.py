@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from pymongo import MongoClient
 import os
 import threading
@@ -12,6 +13,9 @@ from reactor.handler import ( HandlerTypeName,
 from scheduler import  start_scheduler_async #start_scheduler,
 from reactor import REACTOR
 app = Flask(__name__)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
 
 def start_async_reactor():
     # Set up a new event loop for the background thread
