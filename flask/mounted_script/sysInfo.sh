@@ -32,6 +32,7 @@ display_system_info() {
 
     # Output as JSON
     echo -e "{
+    \"BoardingStatus\":\"ONBOARDED\",
     \"Hardware\": {
         \"Processor\": {
             \"CpuType\": \"$CPU_TYPE\",

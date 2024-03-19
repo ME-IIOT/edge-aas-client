@@ -6,7 +6,7 @@ networks:
 services:
   mongodb:
     image: mongo:4.4
-    container_name: mongo-4.4
+    container_name: mongodb
     ports:
       - "27018:27017"
     volumes:
@@ -15,6 +15,7 @@ services:
       - edge_network
 
   web:
+    container_name: web
     image: manhlinh210/flask_aas_edge:amd64-1.0.2
     ports:
       - 18000:18000

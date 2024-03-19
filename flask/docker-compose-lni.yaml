@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # nginx container service serving the react app and the flask app
+  nginx:
+    container_name: lni-aas-edge-client-nginx
+    image: nginx:1.19.0-alpine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+      - react-app
+    networks:
+      - edge_network
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - /db:/data/db
+    networks:
+      - edge_network
+
+  web:
+    container_name: web
+    image: manhlinh210/flask_aas_edge:amd64-1.0.2
+    ports:
+      - 18000:18000
+    env_file:
+      - aas_client.env
+    networks:
+      - edge_network
+    depends_on:
+      - mongodb
+    # restart: always
+    # Additional volumes
+    volumes:
+    #   - ./vendor_images:/code/static/vendor_images
+      - ./mounted_script:/app/scheduler_functions/mounted_script
+      - /proc/meminfo:/host_proc/meminfo:ro
+  react-app:
+    container_name: react-app
+    image: lni-aas-react-app
+    depends_on:
+      - mongodb
+      - web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ./public/mount_volume
+        target: /app/build/mount_volume
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_BASE_URL=http://web:18000
+      - REACT_APP_MAIN_COLOR="#37A40D"
+    networks:
+      - edge_network
+
+networks:
+  edge_network:
+    name: edge_network
