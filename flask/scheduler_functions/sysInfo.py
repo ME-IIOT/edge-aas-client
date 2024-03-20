@@ -90,6 +90,7 @@ submodels_collection = db['submodels']
 import asyncio
 async def update_system_info_async():
     try:
+        print("update sysInfo")
         import os
         import json
         current_directory = os.getcwd()

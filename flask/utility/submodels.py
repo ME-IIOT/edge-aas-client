@@ -65,8 +65,28 @@ def fetch_submodels(collectionName: Collection, aasxServerUrl: str, aasIdShort: 
 # PARSER
 def clientJson_2_aasSM(clientJson: typing.Dict, templateJson: typing.List):
     '''Required inputResponse and templateJSON need to be same structure of submodelElements and Properties'''
-    try:
-        for element in templateJson:
+    # try:
+    #     for element in templateJson:
+    #         if element["modelType"] == "MultiLanguageProperty":
+    #             languageList = []
+    #             for language, text in clientJson[element["idShort"]].items():
+    #                 languageList.append({"language": language, "text": text})
+    #             element["value"] = languageList
+    #         elif element["modelType"] == "Property":
+    #             element["value"] = clientJson[element["idShort"]]
+    #         elif element["modelType"] == "SubmodelElementCollection":
+    #             clientJson_2_aasSM(clientJson[element["idShort"]], element["value"])
+    #         else:
+    #             pass
+    # except KeyError:
+    #     raise KeyError(f"Key {element['idShort']} not found in RequestBody")
+    # except TypeError:
+    #     raise TypeError(f"Type of {element['idShort']} is not match")
+
+    '''This approach collect information from the clientJSON and then update the template
+    missing informtion in clientJSON is accepted and not updated in the template'''
+    for element in templateJson:
+        try:
             if element["modelType"] == "MultiLanguageProperty":
                 languageList = []
                 for language, text in clientJson[element["idShort"]].items():
@@ -78,10 +98,12 @@ def clientJson_2_aasSM(clientJson: typing.Dict, templateJson: typing.List):
                 clientJson_2_aasSM(clientJson[element["idShort"]], element["value"])
             else:
                 pass
-    except KeyError:
-        raise KeyError(f"Key {element['idShort']} not found in RequestBody")
-    except TypeError:
-        raise TypeError(f"Type of {element['idShort']} is not match")
+        except KeyError as e:
+            print(f"Key {element['idShort']} not found in RequestBody")
+            continue
+        except TypeError as e:
+            print(f"Type of {element['idShort']} is not match")
+            continue
     
 def aasSM_2_clientJson(submodelElements: typing.List[typing.Dict]) -> typing.Dict:
     clientJson = {} # init
@@ -181,6 +203,7 @@ async def async_update_submodel(collectionName: Collection,
             # Assuming clientJson_2_aasSM can either be run synchronously without much delay, or made async
             clientJson_2_aasSM(clientJson=updated_data, templateJson=submodel_template["submodelElements"])
         except KeyError as e:
+            print("KeyError", e)
             return ({"error": str(e)}, 500)
 
         # Assuming update_one is adapted for async operation or you're using an async-compatible database client

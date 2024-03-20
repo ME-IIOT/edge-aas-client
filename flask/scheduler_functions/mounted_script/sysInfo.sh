@@ -22,6 +22,7 @@ display_system_info() {
 
     # Output as JSON
     echo -e "{
+    
     \"Hardware\": {
         \"Processor\": {
             \"CpuType\": \"$CPU_TYPE\",

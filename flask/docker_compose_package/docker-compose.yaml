@@ -6,13 +6,14 @@ networks:
 services:
   mongodb:
     image: mongo:4.4
-    container_name: mongo-4.4
+    container_name: mongo-lni-4.4
     ports:
       - "27018:27017"
     volumes:
       - /db:/data/db
     networks:
       - edge_network
+    # restart: always
 
   web:
     image: manhlinh210/flask_aas_edge:amd64-1.0.2
@@ -30,3 +31,26 @@ services:
     #   - ./vendor_images:/code/static/vendor_images
       - ./mounted_script:/app/scheduler_functions/mounted_script
       - /proc/meminfo:/host_proc/meminfo:ro
+  
+  react-app:
+    container_name: lni-aas-react-app
+    image: khaiyacoub/lni-aas-react-app:amd64-0.1.0
+    depends_on:
+      - mongodb
+      - web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        # source: ./public/mount_volume
+        source: ./public/mount_volume
+        target: /app/build/mount_volume
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_BASE_URL=http://web:18000
+      - REACT_APP_MAIN_COLOR="#37A40D"
+    networks:
+      - edge_network
