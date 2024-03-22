@@ -72,7 +72,7 @@ submodels_collection = db['submodels']
 
 from utility.onboarding import edge_device_onboarding
 
-edge_device_onboarding(aasxServerUrl=AASX_SERVER, aasIdentifier=AAS_IDENTIFIER, aasIdShort=AAS_ID_SHORT, 
+edge_device_onboarding(aasx_server=AASX_SERVER, aas_uid=AAS_IDENTIFIER, aas_id_short=AAS_ID_SHORT, 
                        shells_collection=shells_collection, submodels_collection=submodels_collection)
 
 activate_reactor()

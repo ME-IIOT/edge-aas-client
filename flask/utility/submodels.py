@@ -20,24 +20,17 @@ def read_content_of_table(collectionName: Collection, tableName: str) -> typing.
     return table_content
 
 def extract_key_value(jsonData: typing.Dict[str,str]) -> typing.Tuple[typing.List[str], typing.List[str]]:
-    # # Old version
-    # key_dictionary = []
-    # value_dicitionary = []
-    # for key, value in jsonData.items():
-    #     key_dictionary.append(key)
-    #     value_dicitionary.append(value)
-    # return (key_dictionary, value_dicitionary)
-    
     # New Version
     keys, values = zip(*jsonData.items()) if jsonData else ([], [])
     return list(keys), list(values)
 
 
 # TODO: change if need aas_uid for url? only when concept of REST API for submodel is incorrect
-def fetch_single_submodel(  submodel_id: str, submodels_collection: Collection , 
-                            aasxServerUrl: str, aasIdShort:str):
+def fetch_single_submodel(  submodel_uid: str, submodels_collection: Collection , 
+                            aasx_server: str, aasIdShort:str,
+                            aas_uid: str):
     #submodel_url = aasxServerUrl + "submodels/" + encode_base64url(submodel_id)
-    submodel_url = f"{aasxServerUrl}/submodels/{encode_base64url(submodel_id)}"
+    submodel_url = f"{aasx_server}/shells/{encode_base64url(aas_uid)}/submodels/{encode_base64url(submodel_uid)}"
     response = requests.get(submodel_url)
     if response.status_code == 200:
         body = json.loads(response.text)
@@ -49,15 +42,15 @@ def fetch_single_submodel(  submodel_id: str, submodels_collection: Collection ,
         )
     else:
         print(f"Failed to fetch URL {submodel_url}. Status code:", response.status_code)
-    pass
+    
 
-def fetch_submodels(collectionName: Collection, aasxServerUrl: str, aasIdShort: str):
+def fetch_submodels(collectionName: Collection, aasxServerUrl: str, aasIdShort: str, aas_uid: str):
     # read content -> Dict
     table_content = read_content_of_table(collectionName=collectionName, tableName=f"{aasIdShort}:submodels_dictionary")
     # read idShort -> List
     _, submodels_id= extract_key_value(table_content)
     # update each single submodel using ThreadPoolExecute
-    fetch_func = partial(fetch_single_submodel, submodels_collection=collectionName, aasxServerUrl=aasxServerUrl, aasIdShort=aasIdShort)
+    fetch_func = partial(fetch_single_submodel, submodels_collection=collectionName, aasxServerUrl=aasxServerUrl, aasIdShort=aasIdShort, aas_uid=aas_uid)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(fetch_func, submodels_id)
     
