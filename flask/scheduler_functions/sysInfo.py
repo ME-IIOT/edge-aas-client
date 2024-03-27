@@ -1,8 +1,4 @@
-# import subprocess
-# import json
-from datetime import datetime
 import os
-# import sys
 from pymongo import MongoClient
 
 # Add the path to the sys.path list

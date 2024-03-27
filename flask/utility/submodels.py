@@ -40,15 +40,16 @@ def fetch_single_submodel(  submodel_uid: str, submodels_collection: Collection 
             {"$set": body},
             upsert=True
         )
+        return True
     else:
         print(f"Failed to fetch URL {submodel_url}. Status code:", response.status_code)
-    
+        return False
 
 def fetch_submodels(collectionName: Collection, aasxServerUrl: str, aasIdShort: str, aas_uid: str):
     # read content -> Dict
-    table_content = read_content_of_table(collectionName=collectionName, tableName=f"{aasIdShort}:submodels_dictionary")
+    submodel_dictionary = read_content_of_table(collectionName=collectionName, tableName=f"{aasIdShort}:submodels_dictionary")
     # read idShort -> List
-    _, submodels_id= extract_key_value(table_content)
+    _, submodels_id= extract_key_value(submodel_dictionary)
     # update each single submodel using ThreadPoolExecute
     fetch_func = partial(fetch_single_submodel, submodels_collection=collectionName, aasxServerUrl=aasxServerUrl, aasIdShort=aasIdShort, aas_uid=aas_uid)
     with concurrent.futures.ThreadPoolExecutor() as executor:

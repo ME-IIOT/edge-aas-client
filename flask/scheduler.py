@@ -4,6 +4,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from utility.utility import execute_files_in_folder
 # from utility.sysInfo import update_system_info
 from scheduler_functions.sysInfo import  update_system_info_async #update_system_info,
+from scheduler_functions.fetch_sys_info import fetch_system_info_async
 from scheduler_functions.time_series import update_time_series_data
 # from scheduler_functions.time_series
 import os
@@ -36,6 +37,8 @@ def start_scheduler_async():
     # Schedule the async job
     client_polling_interval  =  5
     aas_edge_scheduler_async.add_job(update_system_info_async, 'interval', seconds=client_polling_interval, max_instances=4, id="system_info_job")
+    
+    aas_edge_scheduler_async.add_job(fetch_system_info_async, 'interval', seconds=client_polling_interval, max_instances=4, id="fetch_system_info_job")
     # Conditional scheduling based on environment variables
     activate_time_series_str = os.environ.get('ACTIVATE_TIMESERIES', '').strip().lower()
     activate_time_series = activate_time_series_str == 'true'
