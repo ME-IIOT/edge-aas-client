@@ -29,7 +29,7 @@ source venv/bin/activate
 ```
 
 ## Start Backend in python virtual env
-If ENV is loaded in virtual env do the following. If not apply the virtual environment in file dev_aas_client.env
+If ENV is loaded in virtual env do the following. If not apply the virtual environment in file dev_aas_client.env (for windows see this https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-powershell-1.0/ff730964(v=technet.10)?redirectedfrom=MSDN)
 
 Start mongo db
 
@@ -41,9 +41,23 @@ python run.py
 
 ## Start in container environment
 
-without frontend
+### With published images
 
 ```
 cd docker_compose_package
 docker-compose up
+```
+### For development
+
+1. rebuild image
+
+docker-compose -f docker-compose.yaml build
+
+2. run with built image
+
+docker-compose -f docker-compose.yaml up
+
+## Clean up everything
+```
+docker-compose down
 ```

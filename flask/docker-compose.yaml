@@ -17,6 +17,9 @@ services:
   web:
     container_name: web
     image: manhlinh210/flask_aas_edge:amd64-1.0.2
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 18000:18000
     env_file:

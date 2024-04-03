@@ -1,5 +1,10 @@
 version: '3.8'
 
+
+networks:
+  edge_network:
+    name: edge_network
+
 services:
 
   mongodb:
@@ -38,9 +43,6 @@ services:
     depends_on:
       - mongodb
       - web
-    build:
-      context: .
-      dockerfile: Dockerfile
     volumes:
       - type: bind
         source: ./public/mount_volume
@@ -67,7 +69,4 @@ services:
     networks:
       - edge_network
 
-networks:
-  edge_network:
-    name: edge_network
 
